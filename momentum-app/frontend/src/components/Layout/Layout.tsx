@@ -1,8 +1,9 @@
 import { Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import { Input } from "../Input/Input";
 import CreateNoteDialog from "../Dialogs/CreateNoteDialog";
+import { apiRequest } from "@/utils/api";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -23,6 +24,24 @@ const Layout = ({ children }: any) => {
   };
 
   const handleCreateNote = () => {};
+
+  const getTasks = async () => {
+    try {
+      const newTaskData = { title: "İlk task", description: "Text" };
+
+      const task = await apiRequest("/tasks", {
+        method: "POST",
+        body: newTaskData,
+      });
+      console.log("RESPONSE TASK : ", task);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">

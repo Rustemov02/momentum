@@ -9,7 +9,7 @@ export interface ITask extends Document {
 
 const TaskSchema: Schema = new Schema({
   title: { type: String, required: true },
-  description: { type: String, required: false },
+  description: { type: String },
   completed: { type: Boolean, required: false },
   createdAt: { type: Date, default: Date.now },
 });
