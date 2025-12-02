@@ -25,22 +25,17 @@ const Layout = ({ children }: any) => {
 
   const handleCreateNote = () => {};
 
-  const getTasks = async () => {
+  const fetchTasks = async () => {
     try {
-      const newTaskData = { title: "İlk task", description: "Text" };
-
-      const task = await apiRequest("/tasks", {
-        method: "POST",
-        body: newTaskData,
-      });
-      console.log("RESPONSE TASK : ", task);
+      const tasks = await apiRequest("/api/tasks");
+      console.log(tasks);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    getTasks();
+    fetchTasks();
   }, []);
 
   return (

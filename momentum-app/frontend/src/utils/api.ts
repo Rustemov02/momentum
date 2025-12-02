@@ -14,8 +14,7 @@ export const apiRequest = async (
   endpoint: string,
   { method = "GET", body, headers = {} }: ApiRequestOptions = {}
 ) => {
-  console.log(import.meta.env.VITE_BASE_URL);
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
   try {
     // Default başlıqlar (headers)
     const config = {
