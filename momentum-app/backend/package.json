@@ -1,14 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --loader ts-node/esm src/index.ts",
-    "start": "node dist/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
