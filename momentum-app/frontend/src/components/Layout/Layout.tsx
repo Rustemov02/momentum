@@ -96,7 +96,7 @@ focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 focus:outline-none"
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">
-            {true ? (
+            {taskData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* {filteredNotes.map((note) => (
                   <NoteCard
