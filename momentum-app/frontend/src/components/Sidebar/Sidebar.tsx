@@ -73,11 +73,11 @@ const Sidebar: FC<SidebarProps> = ({
                     if (isMobileOpen) onMobileToggle();
                   }}
                   className={`
-                    w-full flex items-center space-x-3 px-4 py-3 rounded-lg
-                    transition-all duration-200
+                    w-full flex cursor-pointer items-center space-x-3 px-4 py-3 rounded-lg
+                    transition-all duration-200 border border-none
                     ${
                       isActive
-                        ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                        ? "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
                         : "text-gray-400 hover:text-white hover:bg-gray-800/50"
                     }
                   `}

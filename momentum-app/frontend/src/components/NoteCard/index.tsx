@@ -1,14 +1,15 @@
 import React from "react";
 import { Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/Badge/Badge";
+import { formatDate } from "@/utils";
 
 export interface Note {
-  id: string;
+  _id: string;
   title: string;
-  preview: string;
+  // preview: string;
   tags: string[];
   createdAt: Date;
-  type: "note" | "task";
+  // type: "note" | "task";
 }
 
 interface NoteCardProps {
@@ -17,37 +18,17 @@ interface NoteCardProps {
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const dateObj = new Date(date);
-    const diffInMs = now.getTime() - dateObj.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInMinutes < 1) return "Just now";
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInDays === 1) return "Yesterday";
-    if (diffInDays < 7) return `${diffInDays}d ago`;
-
-    return dateObj.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   return (
     <div
       onClick={() => onClick(note)}
-      className="group relative p-5 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-cyan-500/10"
+      className="group flex flex-col justify-between relative p-5 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-cyan-500/10"
     >
       {/* Content */}
       <h3 className="text-white mb-2 group-hover:text-cyan-400 transition-colors">
         {note.title}
       </h3>
 
-      <p className="text-gray-400 text-sm mb-4 line-clamp-2">{note.preview}</p>
+      {/* <p className="text-gray-400 text-sm mb-4 line-clamp-2">{note.preview}</p> */}
 
       {/* Tags */}
       {note.tags.length > 0 && (
