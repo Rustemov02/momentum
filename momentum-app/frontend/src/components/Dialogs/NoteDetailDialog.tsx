@@ -17,6 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/Dialogs/AlertDialog";
 import { formatDate } from "@/utils";
+import { apiRequest } from "@/utils/api";
 
 interface NoteDetailDialogProps {
   note: Note | null;
@@ -34,16 +35,22 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editContent, setEditContent] = useState("");
-  const [editTags, setEditTags] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  console.log("NOTE : ", note);
+
+  const [noteData, setNoteData] = useState({
+    title: "",
+    description: "",
+    tags: [""],
+  });
 
   useEffect(() => {
     if (note) {
-      setEditTitle(note.title);
-      setEditContent(note.preview);
-      setEditTags(note.tags.join(", "));
+      setNoteData({
+        title: note.title,
+        description: note.description,
+        tags: note.tags ?? [],
+      });
     }
   }, [note]);
 
@@ -56,17 +63,11 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   if (!isOpen || !note) return null;
 
   const handleSave = () => {
-    const tags = editTags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-
-    onUpdate?.(note._id, {
-      title: editTitle,
-      preview: editContent,
-      tags,
-    });
-    setIsEditing(false);
+    const payload = {};
+    // const response = apiRequest(`/tasks/${note._id}`, {
+    //   method: "PUT",
+    //   body: payload,
+    // });
   };
 
   const handleDelete = () => {
@@ -76,9 +77,9 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   };
 
   const handleCancel = () => {
-    setEditTitle(note.title);
-    setEditContent(note.preview);
-    setEditTags(note.tags.join(", "));
+    // setEditTitle(note.title);
+    // setEditContent(note.preview);
+    // setEditTags(note.tags.join(", "));
     setIsEditing(false);
   };
 
@@ -182,8 +183,13 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                   {isEditing ? (
                     <Input
                       type="text"
-                      value={editTitle}
-                      onChange={(e) => setEditTitle(e.target.value)}
+                      value={noteData?.title}
+                      onChange={(e) =>
+                        setNoteData((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }))
+                      }
                       className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 text-sm sm:text-base h-9 sm:h-10"
                       placeholder="Enter note title..."
                     />
@@ -201,8 +207,13 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                   </label>
                   {isEditing ? (
                     <Textarea
-                      value={note.description}
-                      onChange={(e) => setEditContent(e.target.value)}
+                      value={noteData.description}
+                      onChange={(e) =>
+                        setNoteData((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       rows={8}
                       className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 resize-none text-sm sm:text-base"
                       placeholder="Write your note content..."
@@ -220,33 +231,31 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                     <Tag className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-1.5" />
                     Tags
                   </label>
-                  {isEditing ? (
-                    <Input
-                      type="text"
-                      value={editTags}
-                      onChange={(e) => setEditTags(e.target.value)}
-                      className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 text-sm sm:text-base h-9 sm:h-10"
-                      placeholder="work, meeting, urgent (comma separated)"
-                    />
-                  ) : (
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {note.tags.length > 0 ? (
-                        note.tags.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-gray-500 text-xs sm:text-sm">
-                          No tags
-                        </span>
-                      )}
-                    </div>
-                  )}
+
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {noteData.tags && noteData.tags.length > 0 ? (
+                      noteData.tags.map((tag, index) => (
+                        <Badge
+                          key={index}
+                          isEdit={isEditing}
+                          onDelete={() =>
+                            setNoteData((prev) => ({
+                              ...prev,
+                              tags: prev.tags?.filter((i) => i !== tag),
+                            }))
+                          }
+                          variant="outline"
+                          className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-xs"
+                        >
+                          {tag}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-gray-500 text-xs sm:text-sm">
+                        No tags
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Metadata */}

@@ -1,10 +1,7 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar/Sidebar";
-import CreateNoteDialog from "../components/Dialogs/CreateNoteDialog";
-import { NoteDetailDialog } from "../components/Dialogs/NoteDetailDialog";
 import Notes from "@/pages/Notes";
 import { SIDEBAR_ITEMS } from "@/constants/sidebar";
-import type { Note } from "@/components/NoteCard";
 import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import Tags from "@/pages/Tags";
@@ -13,9 +10,7 @@ const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   const getTabTitle = () => {
     const item = SIDEBAR_ITEMS.find((i) => i.id === activeTab);
@@ -23,17 +18,15 @@ const Layout = ({ children }: any) => {
     return item ? item?.label : "notes";
   };
 
-  const notesRef = useRef<any>(null);
-
-  const handleNoteClick = (note: Note) => {
-    setSelectedNote(note);
-    setIsDetailDialogOpen(true);
-  };
-
   const renderContent = () => {
     switch (activeTab) {
       case "notes":
-        return <Notes ref={notesRef} onClick={handleNoteClick} />;
+        return (
+          <Notes
+            isCreateDialogOpen={isCreateDialogOpen}
+            setIsCreateDialogOpen={setIsCreateDialogOpen}
+          />
+        );
       case "tags":
         return <Tags />;
     }
@@ -61,21 +54,6 @@ const Layout = ({ children }: any) => {
 
       <CreateNoteButton onClick={setIsCreateDialogOpen} />
 
-      <CreateNoteDialog
-        isOpen={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
-        onSave={(payload) => {
-          notesRef.current?.createNote(payload);
-          setIsCreateDialogOpen(false);
-        }}
-      />
-      <NoteDetailDialog
-        isOpen={isDetailDialogOpen}
-        onClose={() => setIsDetailDialogOpen(false)}
-        note={selectedNote || null}
-        // onUpdate={handleUpdateNote}
-        onDelete={(noteId) => notesRef.current?.deleteNote(noteId)}
-      />
       {children}
     </div>
   );

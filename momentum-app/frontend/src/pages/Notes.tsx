@@ -1,15 +1,25 @@
 import type { TaskPayloadType } from "@/components/Dialogs/CreateNoteDialog";
+import CreateNoteDialog from "@/components/Dialogs/CreateNoteDialog";
+import { NoteDetailDialog } from "@/components/Dialogs/NoteDetailDialog";
 import Loader from "@/components/Loader";
 import { NoteCard, type Note } from "@/components/NoteCard";
 import SearchResult from "@/components/SearchResult";
 import { apiRequest } from "@/utils/api";
-import { Search } from "lucide-react";
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { toast } from "react-toastify";
 
-const Notes = forwardRef((props: { onClick: (note: Note) => void }, ref) => {
+const Notes = ({
+  isCreateDialogOpen,
+  setIsCreateDialogOpen,
+}: {
+  isCreateDialogOpen: boolean;
+  setIsCreateDialogOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [taskData, setTaskData] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
+  // const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   // ! FETCH ALL TASKS FROM DB
   const fetchTasks = async () => {
@@ -65,10 +75,11 @@ const Notes = forwardRef((props: { onClick: (note: Note) => void }, ref) => {
       toast.error("Something went wrong.Please try again later");
     }
   };
-  useImperativeHandle(ref, () => ({
-    createNote: handleCreateNote,
-    deleteNote: handleDeleteNote,
-  }));
+
+  const handleNoteClick = (note: Note) => {
+    setSelectedNote(note);
+    setIsDetailDialogOpen(true);
+  };
 
   if (loading) return <Loader />;
 
@@ -80,15 +91,31 @@ const Notes = forwardRef((props: { onClick: (note: Note) => void }, ref) => {
             <NoteCard
               key={task._id}
               note={task}
-              onClick={() => props.onClick(task)}
+              onClick={() => handleNoteClick(task)}
             />
           ))}
         </div>
       ) : (
         <SearchResult />
       )}
+
+      <CreateNoteDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onSave={(payload) => {
+          handleCreateNote(payload);
+          setIsCreateDialogOpen(false);
+        }}
+      />
+      <NoteDetailDialog
+        isOpen={isDetailDialogOpen}
+        onClose={() => setIsDetailDialogOpen(false)}
+        note={selectedNote || null}
+        // onUpdate={handleUpdateNote}
+        onDelete={(noteId) => handleDeleteNote(noteId)}
+      />
     </>
   );
-});
+};
 
 export default Notes;

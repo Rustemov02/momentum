@@ -44,6 +44,32 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+// PUT - update task
+router.put("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description, tags } = req.body;
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { title, description, tags },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.json(updatedTask);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to update task" });
+  }
+});
+
 // Get all tags with their tasks using aggregation
 router.get("/tags", async (req: Request, res: Response) => {
   try {

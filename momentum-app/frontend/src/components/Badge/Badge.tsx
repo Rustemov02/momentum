@@ -3,9 +3,10 @@ import { Slot } from "@/lib/ui";
 import { cva, type VariantProps } from "@/lib/ui";
 
 import { cn } from "@/utils/index";
+import { X } from "lucide-react";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  "inline-flex items-center select-none justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1   focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
   {
     variants: {
       variant: {
@@ -29,9 +30,16 @@ function Badge({
   className,
   variant,
   asChild = false,
+  children,
+  isEdit,
+  onDelete,
   ...props
 }: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+  VariantProps<typeof badgeVariants> & {
+    asChild?: boolean;
+    isEdit?: boolean;
+    onDelete?: () => void;
+  }) {
   const Comp = asChild ? Slot : "span";
 
   return (
@@ -39,7 +47,10 @@ function Badge({
       data-slot="badge"
       className={cn(badgeVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {children}
+      {isEdit && <X onClick={onDelete} className="cursor-pointer" />}
+    </Comp>
   );
 }
 
