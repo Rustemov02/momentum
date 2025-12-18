@@ -7,6 +7,7 @@ export interface Note {
   _id: string;
   title: string;
   // preview: string;
+  description: string;
   tags: string[];
   createdAt: Date;
   // type: "note" | "task";
@@ -21,7 +22,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onClick }) => {
   return (
     <div
       onClick={() => onClick(note)}
-      className="group flex flex-col justify-between relative p-5 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-cyan-500/10"
+      className="group flex flex-col justify-between rel ative p-5 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-cyan-500/10"
     >
       {/* Content */}
       <h3 className="text-white mb-2 group-hover:text-cyan-400 transition-colors">

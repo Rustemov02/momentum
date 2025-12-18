@@ -38,7 +38,6 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   const [editTags, setEditTags] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  console.log(note);
   useEffect(() => {
     if (note) {
       setEditTitle(note.title);
@@ -188,7 +187,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
               </label>
               {isEditing ? (
                 <Textarea
-                  value={editContent}
+                  value={note.description}
                   onChange={(e) => setEditContent(e.target.value)}
                   rows={8}
                   className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 resize-none text-sm sm:text-base"
@@ -196,7 +195,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                 />
               ) : (
                 <div className="text-gray-300 whitespace-pre-wrap leading-relaxed text-sm sm:text-base wrap-break-word">
-                  {note.preview}
+                  {note.description}
                 </div>
               )}
             </div>
@@ -244,14 +243,6 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                   <span className="wrap-break-word">
                     Created: {formatDate(note.createdAt)}
                   </span>
-                </div>
-                <div className="flex items-center">
-                  <div
-                    className={`w-2 h-2 rounded-full mr-1.5 sm:mr-2 shrink-0 ${
-                      note.type === "task" ? "bg-blue-500" : "bg-cyan-500"
-                    }`}
-                  />
-                  <span className="capitalize">{note.type}</span>
                 </div>
               </div>
             </div>

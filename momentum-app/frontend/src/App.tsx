@@ -1,4 +1,4 @@
-import Layout from "./components/Layout/Layout";
+import Layout from "./layouts/Layout";
 import { ToastContainer } from "react-toastify";
 
 const App = ({ children }: any) => {

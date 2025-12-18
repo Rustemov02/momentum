@@ -1,4 +1,5 @@
-import { CheckSquare, FileText, Inbox, Menu, X } from "lucide-react";
+import { SIDEBAR_ITEMS } from "@/constants/sidebar";
+import { FileText, Menu, X } from "lucide-react";
 import type { FC } from "react";
 
 interface SidebarProps {
@@ -13,12 +14,6 @@ const Sidebar: FC<SidebarProps> = ({
   isMobileOpen,
   onMobileToggle,
 }) => {
-  const navItems = [
-    { id: "notes", label: "Notes", icon: FileText },
-    { id: "tasks", label: "Tasks", icon: CheckSquare },
-    { id: "inbox", label: "Inbox", icon: Inbox },
-  ];
-
   return (
     <>
       {/* Mobile overlay */}
@@ -61,7 +56,7 @@ const Sidebar: FC<SidebarProps> = ({
 
           {/* Navigation */}
           <nav className="space-y-2">
-            {navItems.map((item) => {
+            {SIDEBAR_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
 

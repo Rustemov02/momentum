@@ -1,15 +1,17 @@
 import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import Sidebar from "../Sidebar/Sidebar";
-import { Input } from "../Input/Input";
+import Sidebar from "../components/Sidebar/Sidebar";
+import { Input } from "../components/Input/Input";
 import CreateNoteDialog, {
   type TaskPayloadType,
-} from "../Dialogs/CreateNoteDialog";
+} from "../components/Dialogs/CreateNoteDialog";
 import { apiRequest } from "@/utils/api";
 import { toast } from "react-toastify";
-import { NoteCard, type Note } from "../NoteCard";
-import Loader from "../Loader";
-import { NoteDetailDialog } from "../Dialogs/NoteDetailDialog";
+import Loader from "../components/Loader";
+import { NoteDetailDialog } from "../components/Dialogs/NoteDetailDialog";
+import Notes from "@/pages/Notes";
+import { SIDEBAR_ITEMS } from "@/constants/sidebar";
+import type { Note } from "@/components/NoteCard";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -20,17 +22,11 @@ const Layout = ({ children }: any) => {
   const [taskData, setTaskData] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+
   const getTabTitle = () => {
-    switch (activeTab) {
-      case "notes":
-        return "Notes";
-      case "tasks":
-        return "Tasks";
-      case "inbox":
-        return "Inbox";
-      default:
-        return "Notes";
-    }
+    const item = SIDEBAR_ITEMS.find((i) => i.id === activeTab);
+
+    return item ? item?.label : "notes";
   };
 
   //! CREATE TASK
@@ -45,6 +41,7 @@ const Layout = ({ children }: any) => {
           _id: response._id,
           createdAt: response.createdAt,
           tags: response.tags,
+          description: response.description,
           title: response.title,
         },
         ...prev,
@@ -62,8 +59,6 @@ const Layout = ({ children }: any) => {
     try {
       const tasks = await apiRequest("/tasks");
 
-      console.log(tasks);
-      console.log(tasks);
       setTaskData(tasks);
     } catch (err) {
       console.error(err);
@@ -93,6 +88,16 @@ const Layout = ({ children }: any) => {
       toast.error("Something went wrong.Please try again later");
     }
   };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "notes":
+        return <Notes data={taskData} onClick={handleNoteClick} />;
+      case "tags":
+        return <p>tags</p>;
+    }
+  };
+
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
       <Sidebar
@@ -113,7 +118,7 @@ const Layout = ({ children }: any) => {
             </div>
 
             {/* Search */}
-            <div className="relative ">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <Input
                 type="text"
@@ -121,7 +126,7 @@ const Layout = ({ children }: any) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-gray-800/50 border border-gray-700/50 text-white placeholder:text-gray-500 
-focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 focus:outline-none"
+                          focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 focus:outline-none"
               />
             </div>
           </div>
@@ -130,48 +135,34 @@ focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 focus:outline-none"
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">
             {loading && <Loader />}
-            {!loading &&
-              (taskData.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* {filteredNotes.map((note) => (
-                  <NoteCard
-                    key={note.id}
-                    note={note}
-                    onClick={handleNoteClick}
-                  />
-                ))} */}
-                  {taskData.map((task) => (
-                    <NoteCard
-                      key={task._id}
-                      note={task}
-                      onClick={handleNoteClick}
-                    />
-                  ))}
+            {!loading && taskData.length > 0 ? (
+              renderContent()
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 text-center">
+                <div className="w-16 h-16 rounded-full bg-gray-800/50 flex items-center justify-center mb-4">
+                  <Search className="w-8 h-8 text-gray-600" />
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-64 text-center">
-                  <div className="w-16 h-16 rounded-full bg-gray-800/50 flex items-center justify-center mb-4">
-                    <Search className="w-8 h-8 text-gray-600" />
-                  </div>
-                  <h3 className="text-gray-400 mb-2">
-                    {searchQuery ? "No results found" : `No ${activeTab} yet`}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {searchQuery
-                      ? "Try a different search term"
-                      : "Click the + button to create your first note"}
-                  </p>
-                </div>
-              ))}
+                <h3 className="text-gray-400 mb-2">
+                  {searchQuery ? "No results found" : `No ${activeTab} yet`}
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  {searchQuery
+                    ? "Try a different search term"
+                    : "Click the + button to create your first note"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>
+
       <button
         onClick={() => setIsCreateDialogOpen(true)}
         className="fixed cursor-pointer bottom-6 right-6 w-14 h-14 rounded-full bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 flex items-center justify-center group hover:scale-110 z-30"
       >
         <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
       </button>
+
       <CreateNoteDialog
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}

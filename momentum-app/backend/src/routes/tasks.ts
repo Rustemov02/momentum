@@ -44,4 +44,34 @@ router.delete("/:id", async (req: Request, res: Response) => {
   }
 });
 
+// Get all tags with their tasks using aggregation
+router.get("/tags", async (req: Request, res: Response) => {
+  try {
+    const tagsWithTasks = await Task.aggregate([
+      { $unwind: "$tags" },
+      {
+        $group: {
+          _id: "$tags",
+          tasks: {
+            $push: {
+              _id: "$_id",
+              title: "$title",
+              description: "$description",
+              createdAt: "$createdAt",
+              updatedAt: "$updatedAt",
+            },
+          },
+        },
+      },
+      { $project: { _id: 0, tag: "$_id", tasks: 1 } },
+      { $sort: { tag: 1 } },
+    ]);
+
+    res.json(tagsWithTasks);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to fetch tags" });
+  }
+});
+
 export default router;
