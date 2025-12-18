@@ -7,6 +7,7 @@ import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import type { Note } from "@/components/NoteCard";
 import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
+import Tags from "@/pages/Tags";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -29,14 +30,14 @@ const Layout = ({ children }: any) => {
     setIsDetailDialogOpen(true);
   };
 
-  // const renderContent = () => {
-  //   switch (activeTab) {
-  //     case "notes":
-  //       return <Notes data={taskData} onClick={handleNoteClick} />;
-  //     case "tags":
-  //       return <p>tags</p>;
-  //   }
-  // };
+  const renderContent = () => {
+    switch (activeTab) {
+      case "notes":
+        return <Notes ref={notesRef} onClick={handleNoteClick} />;
+      case "tags":
+        return <Tags />;
+    }
+  };
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
@@ -54,28 +55,7 @@ const Layout = ({ children }: any) => {
         />
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
-          <div className="max-w-6xl mx-auto">
-            {/* {loading && <Loader />}
-            {!loading && taskData.length > 0 ? (
-              renderContent()
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-center">
-                <div className="w-16 h-16 rounded-full bg-gray-800/50 flex items-center justify-center mb-4">
-                  <Search className="w-8 h-8 text-gray-600" />
-                </div>
-                <h3 className="text-gray-400 mb-2">
-                  {searchQuery ? "No results found" : `No ${activeTab} yet`}
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  {searchQuery
-                    ? "Try a different search term"
-                    : "Click the + button to create your first note"}
-                </p>
-              </div>
-            )} */}
-            <Notes ref={notesRef} onClick={handleNoteClick} />
-            {/* <Tags /> */}
-          </div>
+          <div className="max-w-6xl mx-auto">{renderContent()}</div>
         </div>
       </main>
 

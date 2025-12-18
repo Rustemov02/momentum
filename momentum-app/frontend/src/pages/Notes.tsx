@@ -1,6 +1,7 @@
 import type { TaskPayloadType } from "@/components/Dialogs/CreateNoteDialog";
 import Loader from "@/components/Loader";
 import { NoteCard, type Note } from "@/components/NoteCard";
+import SearchResult from "@/components/SearchResult";
 import { apiRequest } from "@/utils/api";
 import { Search } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
@@ -73,13 +74,6 @@ const Notes = forwardRef((props: { onClick: (note: Note) => void }, ref) => {
 
   return (
     <>
-      {/* {filteredNotes.map((note) => (
-                  <NoteCard
-                  key={note.id}
-                  note={note}
-                  onClick={handleNoteClick}
-                  />
-                  ))} */}
       {taskData.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {taskData.map((task) => (
@@ -91,19 +85,7 @@ const Notes = forwardRef((props: { onClick: (note: Note) => void }, ref) => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center h-64 text-center ">
-          <div className="w-16 h-16 rounded-full bg-gray-800/50 flex items-center justify-center mb-4">
-            <Search className="w-8 h-8 text-gray-600" />
-          </div>
-          <h3 className="text-gray-400 mb-2">
-            {true ? "No results found" : `No notes yet`}
-          </h3>
-          <p className="text-gray-600 text-sm">
-            {true
-              ? "Try a different search term"
-              : "Click the + button to create your first note"}
-          </p>
-        </div>
+        <SearchResult />
       )}
     </>
   );
