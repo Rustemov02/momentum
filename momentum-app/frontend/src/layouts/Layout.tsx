@@ -1,17 +1,12 @@
-import { Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import Sidebar from "../components/Sidebar/Sidebar";
-import { Input } from "../components/Input/Input";
-import CreateNoteDialog, {
-  type TaskPayloadType,
-} from "../components/Dialogs/CreateNoteDialog";
-import { apiRequest } from "@/utils/api";
-import { toast } from "react-toastify";
-import Loader from "../components/Loader";
+import CreateNoteDialog from "../components/Dialogs/CreateNoteDialog";
 import { NoteDetailDialog } from "../components/Dialogs/NoteDetailDialog";
 import Notes from "@/pages/Notes";
 import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import type { Note } from "@/components/NoteCard";
+import Header from "@/components/Header/Header";
+import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -19,8 +14,6 @@ const Layout = ({ children }: any) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [taskData, setTaskData] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   const getTabTitle = () => {
@@ -29,74 +22,21 @@ const Layout = ({ children }: any) => {
     return item ? item?.label : "notes";
   };
 
-  //! CREATE TASK
-  const handleCreateNote = async (payload: TaskPayloadType) => {
-    try {
-      const response = await apiRequest("/tasks", {
-        method: "POST",
-        body: payload,
-      });
-      setTaskData((prev) => [
-        {
-          _id: response._id,
-          createdAt: response.createdAt,
-          tags: response.tags,
-          description: response.description,
-          title: response.title,
-        },
-        ...prev,
-      ]);
-      setIsCreateDialogOpen(false);
-      toast.success("Task added successfully");
-    } catch (error) {
-      console.log("Something went wrong : ", error);
-      toast.error("Something went wrong.Please try again");
-    }
-  };
-
-  // ! FETCH ALL TASKS FROM DB
-  const fetchTasks = async () => {
-    try {
-      const tasks = await apiRequest("/tasks");
-
-      setTaskData(tasks);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
+  const notesRef = useRef<any>(null);
 
   const handleNoteClick = (note: Note) => {
     setSelectedNote(note);
     setIsDetailDialogOpen(true);
   };
 
-  const handleDeleteNote = async (noteId: string) => {
-    try {
-      const response = await apiRequest(`/tasks/${noteId}`, {
-        method: "DELETE",
-      });
-      setTaskData((data) => data.filter((item) => item._id !== noteId));
-      toast.success(response.message);
-    } catch (err) {
-      console.log("Something went wrong : ", err);
-      toast.error("Something went wrong.Please try again later");
-    }
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "notes":
-        return <Notes data={taskData} onClick={handleNoteClick} />;
-      case "tags":
-        return <p>tags</p>;
-    }
-  };
+  // const renderContent = () => {
+  //   switch (activeTab) {
+  //     case "notes":
+  //       return <Notes data={taskData} onClick={handleNoteClick} />;
+  //     case "tags":
+  //       return <p>tags</p>;
+  //   }
+  // };
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
@@ -107,34 +47,15 @@ const Layout = ({ children }: any) => {
         onMobileToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
       />
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="shrink-0 px-6 lg:px-8 py-6 border-b border-gray-800/50 bg-gray-900/30 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white ml-12 lg:ml-0">{getTabTitle()}</h2>
-              {/* <div className="text-gray-400 text-sm">
-                {filteredNotes.length}{" "}
-                {filteredNotes.length === 1 ? "item" : "items"}
-              </div> */}
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <Input
-                type="text"
-                placeholder="Search notes, tags, or content..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-gray-800/50 border border-gray-700/50 text-white placeholder:text-gray-500 
-                          focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/80 focus:outline-none"
-              />
-            </div>
-          </div>
-        </header>
+        <Header
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          tabTitle={getTabTitle()}
+        />
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">
-            {loading && <Loader />}
+            {/* {loading && <Loader />}
             {!loading && taskData.length > 0 ? (
               renderContent()
             ) : (
@@ -151,29 +72,29 @@ const Layout = ({ children }: any) => {
                     : "Click the + button to create your first note"}
                 </p>
               </div>
-            )}
+            )} */}
+            <Notes ref={notesRef} onClick={handleNoteClick} />
+            {/* <Tags /> */}
           </div>
         </div>
       </main>
 
-      <button
-        onClick={() => setIsCreateDialogOpen(true)}
-        className="fixed cursor-pointer bottom-6 right-6 w-14 h-14 rounded-full bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 flex items-center justify-center group hover:scale-110 z-30"
-      >
-        <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
-      </button>
+      <CreateNoteButton onClick={setIsCreateDialogOpen} />
 
       <CreateNoteDialog
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
-        onSave={handleCreateNote}
+        onSave={(payload) => {
+          notesRef.current?.createNote(payload);
+          setIsCreateDialogOpen(false);
+        }}
       />
       <NoteDetailDialog
         isOpen={isDetailDialogOpen}
         onClose={() => setIsDetailDialogOpen(false)}
         note={selectedNote || null}
         // onUpdate={handleUpdateNote}
-        onDelete={handleDeleteNote}
+        onDelete={(noteId) => notesRef.current?.deleteNote(noteId)}
       />
       {children}
     </div>
