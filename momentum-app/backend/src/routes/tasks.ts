@@ -50,24 +50,15 @@ router.put("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const { title, description, tags } = req.body;
 
-    // Validation
+    // Sadəcə title vacibdir
     if (!title || title.trim() === "") {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    if (!description || description.trim() === "") {
-      return res.status(400).json({ message: "Description is required" });
-    }
-
-    if (!Array.isArray(tags) || tags.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Tags must be a non-empty array" });
-    }
-
+    // Update edirik, description və tags optional
     const updatedTask = await Task.findByIdAndUpdate(
       id,
-      { title, description, tags },
+      { title, description, ...(tags !== undefined && { tags }) },
       {
         new: true,
         runValidators: true,

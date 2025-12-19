@@ -61,20 +61,45 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
 
   if (!isOpen || !note) return null;
 
+  const [fieldErrors, setFieldErrors] = useState<{
+    title?: string;
+    description?: string;
+    tags?: string;
+  }>({});
+
   const handleSave = async () => {
     console.log("SAVED DATA : ", noteData);
+
+    const tempErrors: typeof fieldErrors = {};
+    if (!noteData.title?.trim()) tempErrors.title = "Title is required";
+    if (!noteData.description?.trim())
+      tempErrors.description = "Description is required";
+    if (noteData.tags !== undefined && !Array.isArray(noteData.tags))
+      tempErrors.tags = "Tags must be an array";
+
+    if (Object.keys(tempErrors).length > 0) {
+      setFieldErrors(tempErrors);
+      return;
+    }
+
     try {
       const response = await apiRequest(`/tasks/${note._id}`, {
         method: "PUT",
         body: noteData,
       });
 
-      console.log("response : ", response);
+      if ((response as any).errors) {
+        setFieldErrors((response as any).errors);
+        return;
+      }
+
+      // Success
       toast.success("Task edited successfully");
+      onUpdate?.(note._id, response);
       onClose();
     } catch (err) {
       console.log("Something went wrong : ", err);
-      toast.error("Something went wrong,Please try again");
+      toast.error("Something went wrong, please try again");
     }
   };
 
@@ -214,6 +239,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                       }
                       className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 text-sm sm:text-base h-9 sm:h-10"
                       placeholder="Enter note title..."
+                      error={fieldErrors?.title || ""}
                     />
                   ) : (
                     <h3 className="text-white text-base sm:text-xl wrap-break-word">
