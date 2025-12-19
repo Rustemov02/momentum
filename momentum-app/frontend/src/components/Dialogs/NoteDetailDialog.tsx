@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Edit2, Trash2, Save, Tag, Clock } from "lucide-react";
+import { X, Edit2, Trash2, Save, Tag, Clock, Plus, Tags } from "lucide-react";
 import { type Note } from "@/components/NoteCard/index";
 import { Button } from "@/components/Button/Button";
 import { Input } from "@/components/Input/Input";
@@ -18,9 +18,10 @@ import {
 } from "@/components/Dialogs/AlertDialog";
 import { formatDate } from "@/utils";
 import { apiRequest } from "@/utils/api";
+import { toast } from "react-toastify";
 
 interface NoteDetailDialogProps {
-  note: Note | null;
+  note: Note;
   isOpen: boolean;
   onClose: () => void;
   onUpdate?: (id: string, updatedNote: Partial<Note>) => void;
@@ -36,38 +37,45 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  console.log("NOTE : ", note);
-
-  const [noteData, setNoteData] = useState({
-    title: "",
-    description: "",
-    tags: [""],
+  const [tagInput, setTagInput] = useState("");
+  const getInitialData = (note: Note) => ({
+    title: note?.title || "",
+    description: note?.description || "",
+    tags: note?.tags ?? [],
   });
 
+  const [noteData, setNoteData] = useState(() => getInitialData(note));
+
   useEffect(() => {
-    if (note) {
-      setNoteData({
-        title: note.title,
-        description: note.description,
-        tags: note.tags ?? [],
-      });
+    if (note && !isEditing) {
+      setNoteData(getInitialData(note));
     }
-  }, [note]);
+  }, [note, isEditing]);
 
   useEffect(() => {
     if (!isOpen) {
       setIsEditing(false);
+      setNoteData(getInitialData(note));
     }
   }, [isOpen]);
 
   if (!isOpen || !note) return null;
 
-  const handleSave = () => {
-    const payload = {};
-    // const response = apiRequest(`/tasks/${note._id}`, {
-    //   method: "PUT",
-    //   body: payload,
-    // });
+  const handleSave = async () => {
+    console.log("SAVED DATA : ", noteData);
+    try {
+      const response = await apiRequest(`/tasks/${note._id}`, {
+        method: "PUT",
+        body: noteData,
+      });
+
+      console.log("response : ", response);
+      toast.success("Task edited successfully");
+      onClose();
+    } catch (err) {
+      console.log("Something went wrong : ", err);
+      toast.error("Something went wrong,Please try again");
+    }
   };
 
   const handleDelete = () => {
@@ -76,11 +84,25 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
     onClose();
   };
 
+  const handleEdit = () => {
+    setNoteData(getInitialData(note));
+    setIsEditing(true);
+  };
+
   const handleCancel = () => {
-    // setEditTitle(note.title);
-    // setEditContent(note.preview);
-    // setEditTags(note.tags.join(", "));
+    setNoteData(getInitialData(note));
     setIsEditing(false);
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim();
+    if (trimmedTag && !noteData.tags.includes(trimmedTag)) {
+      setNoteData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, trimmedTag],
+      }));
+    }
+    setTagInput("");
   };
 
   return (
@@ -128,7 +150,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setIsEditing(true)}
+                        onClick={handleEdit}
                         className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
                       >
                         <Edit2 className="w-4 h-4 sm:mr-2" />
@@ -157,7 +179,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                       <Button
                         size="sm"
                         onClick={handleSave}
-                        className="bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white h-8 px-2 sm:px-3"
+                        className="bg-linear-to-r cursor-pointer from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white h-8 px-2 sm:px-3"
                       >
                         <Save className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Save</span>
@@ -232,29 +254,49 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                     Tags
                   </label>
 
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {noteData.tags && noteData.tags.length > 0 ? (
-                      noteData.tags.map((tag, index) => (
-                        <Badge
-                          key={index}
-                          isEdit={isEditing}
-                          onDelete={() =>
-                            setNoteData((prev) => ({
-                              ...prev,
-                              tags: prev.tags?.filter((i) => i !== tag),
-                            }))
-                          }
-                          variant="outline"
-                          className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-xs"
+                  <div className="flex flex-col w-full gap-1.5 sm:gap-2">
+                    {isEditing && (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add tags..."
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          // onKeyDown={handleAddTag}
+                          className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50"
+                        />
+                        <button
+                          onClick={() => handleAddTag()}
+                          disabled={!tagInput.trim()}
+                          className="px-4 py-2 cursor-pointer bg-cyan-500/20 hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-cyan-400 rounded-lg border border-cyan-500/30 transition-colors"
                         >
-                          {tag}
-                        </Badge>
-                      ))
-                    ) : (
-                      <span className="text-gray-500 text-xs sm:text-sm">
-                        No tags
-                      </span>
+                          <Plus className="w-5 h-5" />
+                        </button>
+                      </div>
                     )}
+                    <div className="flex items-center justify-start gap-2">
+                      {noteData.tags && noteData.tags.length > 0 ? (
+                        noteData.tags.map((tag, index) => (
+                          <Badge
+                            key={index}
+                            isEdit={isEditing}
+                            onDelete={() =>
+                              setNoteData((prev) => ({
+                                ...prev,
+                                tags: prev.tags?.filter((i) => i !== tag),
+                              }))
+                            }
+                            variant="outline"
+                            className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-xs"
+                          >
+                            {tag}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-gray-500 text-xs sm:text-sm">
+                          No tags
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
