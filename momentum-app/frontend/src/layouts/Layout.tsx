@@ -1,16 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Notes from "@/pages/Notes";
 import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import Tags from "@/pages/Tags";
+import { toast } from "react-toastify";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const handleOnline = () => {
+      toast.success("🌐 İnternet bağlantısı bərpa olundu!", {
+        position: "bottom-right",
+        autoClose: 3000,
+      });
+    };
+
+    const handleOffline = () => {
+      toast.warning(
+        "⚠️ İnternet bağlantınız kəsildi. Keşlənmiş məlumatlar göstərilir.",
+        {
+          position: "bottom-right",
+          autoClose: false, // Offline qalana qədər göstər
+        }
+      );
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const getTabTitle = () => {
     const item = SIDEBAR_ITEMS.find((i) => i.id === activeTab);
