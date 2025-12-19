@@ -7,7 +7,7 @@ function Input({
   type,
   error,
   ...props
-}: React.ComponentProps<"input"> & { error: string }) {
+}: React.ComponentProps<"input"> & { error?: string }) {
   return (
     <>
       <input

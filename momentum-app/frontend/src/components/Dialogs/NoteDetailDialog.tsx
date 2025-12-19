@@ -59,23 +59,19 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
     }
   }, [isOpen]);
 
-  if (!isOpen || !note) return null;
-
   const [fieldErrors, setFieldErrors] = useState<{
     title?: string;
-    description?: string;
-    tags?: string;
   }>({});
+
+  if (!isOpen || !note) return null;
 
   const handleSave = async () => {
     console.log("SAVED DATA : ", noteData);
 
-    const tempErrors: typeof fieldErrors = {};
-    if (!noteData.title?.trim()) tempErrors.title = "Title is required";
-    if (!noteData.description?.trim())
-      tempErrors.description = "Description is required";
-    if (noteData.tags !== undefined && !Array.isArray(noteData.tags))
-      tempErrors.tags = "Tags must be an array";
+    const tempErrors: { title?: string } = {};
+    if (!noteData.title?.trim()) {
+      tempErrors.title = "Title is required";
+    }
 
     if (Object.keys(tempErrors).length > 0) {
       setFieldErrors(tempErrors);
@@ -93,7 +89,6 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
         return;
       }
 
-      // Success
       toast.success("Task edited successfully");
       onUpdate?.(note._id, response);
       onClose();
@@ -231,12 +226,13 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                     <Input
                       type="text"
                       value={noteData?.title}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        setFieldErrors((prev) => ({ ...prev, title: "" }));
                         setNoteData((prev) => ({
                           ...prev,
                           title: e.target.value,
-                        }))
-                      }
+                        }));
+                      }}
                       className="bg-gray-800/50 border-gray-700/50 text-white placeholder:text-gray-500 focus:border-cyan-500/50 text-sm sm:text-base h-9 sm:h-10"
                       placeholder="Enter note title..."
                       error={fieldErrors?.title || ""}

@@ -81,6 +81,14 @@ const Notes = ({
     setIsDetailDialogOpen(true);
   };
 
+  const handleUpdateNote = (id: string, updatedData: Note[]) => {
+    console.log(updatedData);
+    setTaskData((prev) =>
+      prev.map((task) => (task._id === id ? { ...task, ...updatedData } : task))
+    );
+    console.log("TASK DATA : ", taskData);
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -111,7 +119,7 @@ const Notes = ({
         isOpen={isDetailDialogOpen}
         onClose={() => setIsDetailDialogOpen(false)}
         note={selectedNote || null}
-        // onUpdate={handleUpdateNote}
+        onUpdate={handleUpdateNote}
         onDelete={(noteId) => handleDeleteNote(noteId)}
       />
     </>
