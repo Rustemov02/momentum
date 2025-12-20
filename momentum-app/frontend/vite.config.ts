@@ -42,18 +42,27 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => {
-              return url.href.includes("momentum02.onrender.com");
-            },
-            handler: "NetworkFirst", // Əvvəl şəbəkədən cəhd et, sonra cache
+            urlPattern: /^https:\/\/momentum02\.onrender\.com\/.*$/,
+            handler: "NetworkFirst",
+            method: "GET",
             options: {
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 gün
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
+            },
+          },
+          {
+            urlPattern: /^https:\/\/momentum02\.onrender\.com\/.*$/,
+            handler: "NetworkOnly",
+            method: "POST",
+            options: {
+              backgroundSync: {
+                name: "taskQueue",
+                options: {
+                  maxRetentionTime: 24 * 60,
+                },
               },
             },
           },
