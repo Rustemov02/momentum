@@ -1,9 +1,11 @@
-import { X, Plus } from "lucide-react";
+import { X, Plus, Clock } from "lucide-react";
 import { useState, useEffect, type FC } from "react";
 import { Input } from "../Input/Input";
 import { Button } from "../Button/Button";
 import { Badge } from "../Badge/Badge";
 import { Textarea } from "../Textarea/Textarea";
+import Select from "../Select/Select";
+import { TIME_DATA } from "@/constants/sidebar";
 
 export interface TaskPayloadType {
   title: string;
@@ -23,6 +25,8 @@ const CreateNoteDialog: FC<CreateNoteDialogProps> = ({
 }) => {
   const [tagInput, setTagInput] = useState("");
   const initialTaskData = { title: "", description: "", tags: [] };
+  const [expiryTime, setExpiryTime] = useState<string>("never");
+
   const [newTaskData, setNewTaskData] =
     useState<TaskPayloadType>(initialTaskData);
 
@@ -157,6 +161,16 @@ const CreateNoteDialog: FC<CreateNoteDialogProps> = ({
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Timer for notes */}
+          <div className="">
+            <Select
+              label="Auto-delete after"
+              options={TIME_DATA}
+              value={expiryTime}
+              setValue={setExpiryTime}
+            />
           </div>
         </div>
 

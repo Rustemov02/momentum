@@ -6,3 +6,10 @@ export const SIDEBAR_ITEMS = [
   // { id: "tasks", label: "Tasks", icon: CheckSquare },
   // { id: "inbox", label: "Inbox", icon: Inbox },
 ];
+
+export const TIME_DATA = [
+  { label: "Never", value: "never" },
+  { label: "1 gün", value: "oneDay" },
+  { label: "3 gün", value: "three days" },
+  { label: "1 həftə", value: "oneWeek" },
+];
