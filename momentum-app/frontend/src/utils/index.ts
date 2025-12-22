@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date) {
+export function formatDate(date: Date | string) {
   const now = new Date();
   const dateObj = new Date(date);
   const diffInMs = now.getTime() - dateObj.getTime();

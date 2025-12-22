@@ -9,7 +9,7 @@ export interface Note {
   // preview: string;
   description: string;
   tags: string[];
-  createdAt: Date;
+  createdAt: Date | string;
   // type: "note" | "task";
 }
 

@@ -40,7 +40,7 @@ const Notes = ({
     if (!pending) return;
 
     const pendingTasks = JSON.parse(pending);
-    
+
     for (const task of pendingTasks) {
       try {
         if (task.action === "create") {
@@ -57,7 +57,7 @@ const Notes = ({
         console.error("Sync failed:", error);
       }
     }
-    
+
     // Uğurlu sync-dən sonra təmizlə
     localStorage.removeItem(PENDING_TASKS_KEY);
     fetchTasks(); // Fresh data gətir
@@ -95,7 +95,7 @@ const Notes = ({
         method: "POST",
         body: payload,
       });
-      
+
       // Real ID ilə yenilə
       setTaskData((prev) =>
         prev.map((task) =>
@@ -112,14 +112,18 @@ const Notes = ({
       );
       toast.success("Task added successfully");
     } catch (error) {
-      console.log("Offline mode - task queued");
-      
+      console.log("Offline mode - task queued", error);
+
       // Offline olarsa localStorage-ə yaz
-      const pending = JSON.parse(localStorage.getItem(PENDING_TASKS_KEY) || "[]");
+      const pending = JSON.parse(
+        localStorage.getItem(PENDING_TASKS_KEY) || "[]"
+      );
       pending.push({ action: "create", payload, tempId });
       localStorage.setItem(PENDING_TASKS_KEY, JSON.stringify(pending));
-      
-      toast.warning("Offline: Task yadda saxlanıldı, internet qayıdanda əlavə ediləcək");
+
+      toast.warning(
+        "Offline: Task yadda saxlanıldı, internet qayıdanda əlavə ediləcək"
+      );
     }
   };
 
@@ -134,13 +138,15 @@ const Notes = ({
       });
       toast.success(response.message);
     } catch (err) {
-      console.log("Offline mode - delete queued");
-      
+      console.log("Offline mode - delete queued", err);
+
       // Offline olarsa localStorage-ə yaz
-      const pending = JSON.parse(localStorage.getItem(PENDING_TASKS_KEY) || "[]");
+      const pending = JSON.parse(
+        localStorage.getItem(PENDING_TASKS_KEY) || "[]"
+      );
       pending.push({ action: "delete", id: noteId });
       localStorage.setItem(PENDING_TASKS_KEY, JSON.stringify(pending));
-      
+
       toast.warning("Offline: Silinmə əməliyyatı yadda saxlanıldı");
     }
   };
@@ -155,7 +161,6 @@ const Notes = ({
     setTaskData((prev) =>
       prev.map((task) => (task._id === id ? { ...task, ...updatedData } : task))
     );
-    console.log("TASK DATA : ", taskData);
   };
 
   if (loading) return <Loader />;
