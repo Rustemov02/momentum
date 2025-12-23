@@ -2,6 +2,7 @@ import React from "react";
 import { Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/Badge/Badge";
 import { formatDate } from "@/utils";
+import type { TIME_DATA } from "@/constants/sidebar";
 
 export interface Note {
   _id: string;
@@ -11,6 +12,7 @@ export interface Note {
   tags: string[];
   createdAt: Date | string;
   // type: "note" | "task";
+  expiryTime: (typeof TIME_DATA)[number]["value"];
 }
 
 interface NoteCardProps {

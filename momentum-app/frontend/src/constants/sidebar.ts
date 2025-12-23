@@ -8,8 +8,10 @@ export const SIDEBAR_ITEMS = [
 ];
 
 export const TIME_DATA = [
-  { label: "Never", value: "never" },
-  { label: "1 gün", value: "oneDay" },
-  { label: "3 gün", value: "three days" },
-  { label: "1 həftə", value: "oneWeek" },
-];
+  { label: "never", value: "never" },
+  { label: "1 hour", value: "1hour" },
+  { label: "3 days", value: "3days" },
+  { label: "7 days", value: "7days" },
+] as const
+
+

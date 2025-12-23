@@ -6,6 +6,7 @@ export interface ITask extends Document {
   tags: string[];
   completed: boolean;
   createdAt: Date;
+  expiresAt?: Date;
 }
 
 const TaskSchema: Schema = new Schema({
@@ -14,6 +15,7 @@ const TaskSchema: Schema = new Schema({
   tags: { type: [String] },
   completed: { type: Boolean, required: false },
   createdAt: { type: Date, default: Date.now },
+  expiresAt: { type: Date, default: null },
 });
 
 export default mongoose.model<ITask>("Task", TaskSchema);

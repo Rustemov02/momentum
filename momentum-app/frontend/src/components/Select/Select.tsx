@@ -9,7 +9,7 @@ const Select: FC<{
   label?: string;
   options: OptionType[];
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  setValue: Dispatch<SetStateAction<OptionType>>;
 }> = ({ label, value, setValue, options }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -43,6 +43,7 @@ const Select: FC<{
             options?.map((option: OptionType) => (
               <option
                 value={option.value}
+                onClick={() => setValue(option)}
                 className="bg-gray-900 p-1 cursor-pointer hover:bg-gray-500 text-white px-2"
               >
                 {option.label}

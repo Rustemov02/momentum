@@ -85,10 +85,14 @@ const Notes = ({
       tags: payload.tags,
       description: payload.description,
       title: payload.title,
+      expiryTime: payload.expiryTime,
     };
 
     // Dərhal UI-da göstər (Optimistic UI)
     setTaskData((prev) => [tempNote, ...prev]);
+
+    console.log("Created NOte : ", tempNote);
+    return;
 
     try {
       const response = await apiRequest("/tasks", {
@@ -96,7 +100,6 @@ const Notes = ({
         body: payload,
       });
 
-      // Real ID ilə yenilə
       setTaskData((prev) =>
         prev.map((task) =>
           task._id === tempId
@@ -106,6 +109,7 @@ const Notes = ({
                 tags: response.tags,
                 description: response.description,
                 title: response.title,
+                expiryTime: response.expiryTime,
               }
             : task
         )
