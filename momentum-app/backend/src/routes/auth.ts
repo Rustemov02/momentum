@@ -1,3 +1,11 @@
+
+declare global {
+  namespace Express {
+    interface Request {
+      logout(): void;
+    }
+  }
+}
 import express from "express";
 import passport from "passport";
 
@@ -21,9 +29,8 @@ router.get(
 
 // Logout
 router.get("/logout", (req, res) => {
-  req.logout(() => {
-    res.redirect("/");
-  });
+  req.logout();
+  res.redirect("/");
 });
 
 export default router;
