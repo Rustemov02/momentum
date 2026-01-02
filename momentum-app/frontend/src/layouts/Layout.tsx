@@ -74,7 +74,14 @@ const Layout = ({ children }: any) => {
           setSearchQuery={setSearchQuery}
           tabTitle={getTabTitle()}
         />
-
+        <button
+          onClick={() => {
+            window.location.href = "https://momentum02.onrender.com/auth/google";
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        >
+          Google ilə daxil ol
+        </button>
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">{renderContent()}</div>
         </div>
