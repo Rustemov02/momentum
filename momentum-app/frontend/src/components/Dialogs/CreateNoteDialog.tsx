@@ -172,17 +172,14 @@ const CreateNoteDialog: FC<CreateNoteDialogProps> = ({
           </div>
 
           {/* Timer for notes */}
-          <div className="">
+          {/* <div className="">
             <Select
               label="Auto-delete after"
               options={TIME_DATA}
               value={newTaskData.expiryTime}
-              setValue={
-                (value) => console.log("VALUE : ", value)
-                setNewTaskData((prev) => ({ ...prev, expiryTime:   }))
-              }
+              setValue={() => {}}
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}

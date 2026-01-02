@@ -1,7 +1,11 @@
+// Passport konfiqurasiyasını əlavə et
+import "./passport";
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import session from "express-session";
+import passport from "passport";
 import Task from "./models/Task";
 import taskRoutes from "./routes/tasks";
 dotenv.config();
@@ -20,12 +24,24 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
+// Session setup (for Google OAuth)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "secret-key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Passport setup
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Test route
 app.get("/api/test", (req, res) => {
   res.json({ message: "Backend is working" });
 });
 app.use("/tasks", taskRoutes);
-
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
