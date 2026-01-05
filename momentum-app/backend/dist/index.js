@@ -3,11 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Passport konfiqurasiyasını əlavə et
+require("./passport");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const express_session_1 = __importDefault(require("express-session"));
+const passport_1 = __importDefault(require("passport"));
 const tasks_1 = __importDefault(require("./routes/tasks"));
+const auth_1 = __importDefault(require("./routes/auth"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
@@ -19,32 +24,23 @@ mongoose_1.default
 // Middleware
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+// Session setup (for Google OAuth)
+app.use((0, express_session_1.default)({
+    secret: process.env.SESSION_SECRET || "secret-key",
+    resave: false,
+    saveUninitialized: false,
+}));
+// Passport setup
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 // Test route
 app.get("/api/test", (req, res) => {
     res.json({ message: "Backend is working" });
 });
+// Routes
 app.use("/tasks", tasks_1.default);
-// app.get("/api/tasks", async (req, res) => {
-//   try {
-//     const tasks = await Task.find();
-//     res.json(tasks);
-//   } catch (err) {
-//     console.error("Failed to get tasks:", err);
-//     res.status(500).json({ message: "Failed to get tasks" });
-//   }
-// });
-// --- POST create task ---
-// app.post("/api/tasks", async (req: Request, res: Response) => {
-//   try {
-//     const { title, description } = req.body;
-//     const task = new Task({ title, description });
-//     await task.save();
-//     res.status(201).json(task);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Failed to create task" });
-//   }
-// });
+app.use("/auth", auth_1.default); // ← BU SƏTIR ƏLAVƏ EDİLDİ!
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on ${PORT}`);
+    console.log(`Google auth: http://localhost:${PORT}/auth/google`); // Test üçün
 });

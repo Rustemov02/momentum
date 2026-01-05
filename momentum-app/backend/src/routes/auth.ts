@@ -19,11 +19,11 @@ router.get(
   }
 );
 
-// Logout (Düzəldilmiş)
-router.get("/logout", (req, res) => {
-  req.logout((err) => {
+// Logout
+router.get("/logout", (req, res, next) => {
+  req.logout((err: any) => {
     if (err) {
-      return res.status(500).json({ error: "Logout zamanı xəta" });
+      return next(err);
     }
     res.redirect("/");
   });
