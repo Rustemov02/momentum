@@ -1,11 +1,3 @@
-
-declare global {
-  namespace Express {
-    interface Request {
-      logout(): void;
-    }
-  }
-}
 import express from "express";
 import passport from "passport";
 
@@ -27,10 +19,14 @@ router.get(
   }
 );
 
-// Logout
+// Logout (Düzəldilmiş)
 router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect("/");
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ error: "Logout zamanı xəta" });
+    }
+    res.redirect("/");
+  });
 });
 
 export default router;

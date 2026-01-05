@@ -8,6 +8,8 @@ import session from "express-session";
 import passport from "passport";
 import Task from "./models/Task";
 import taskRoutes from "./routes/tasks";
+import authRoutes from "./routes/auth";
+
 dotenv.config();
 
 const app = express();
@@ -41,8 +43,12 @@ app.use(passport.session());
 app.get("/api/test", (req, res) => {
   res.json({ message: "Backend is working" });
 });
+
+// Routes
 app.use("/tasks", taskRoutes);
+app.use("/auth", authRoutes); // ← BU SƏTIR ƏLAVƏ EDİLDİ!
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
+  console.log(`Google auth: http://localhost:${PORT}/auth/google`); // Test üçün
 });
