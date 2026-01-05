@@ -14,8 +14,8 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    // Uğurlu login olduqda frontend-ə yönləndir
-    res.redirect("/");
+    const frontendURL = process.env.FRONTEND_URL || "http://localhost:3000";
+    res.redirect(`${frontendURL}/dashboard`);
   }
 );
 
