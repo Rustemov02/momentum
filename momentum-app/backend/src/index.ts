@@ -46,9 +46,8 @@ app.get("/api/test", (req, res) => {
 
 // Routes
 app.use("/tasks", taskRoutes);
-app.use("/auth", authRoutes); // ← BU SƏTIR ƏLAVƏ EDİLDİ!
+app.use("/auth", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
-  console.log(`Google auth: http://localhost:${PORT}/auth/google`); // Test üçün
 });
