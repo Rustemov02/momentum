@@ -92,7 +92,7 @@ const Notes = ({
     setTaskData((prev) => [tempNote, ...prev]);
 
     console.log("Created NOte : ", tempNote);
-    return;
+  
 
     try {
       const response = await apiRequest("/tasks", {
