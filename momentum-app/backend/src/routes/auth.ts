@@ -1,31 +1,32 @@
-import express from "express";
+import { Router } from "express";
 import passport from "passport";
 
-const router = express.Router();
+const router = Router();
 
-// Google login başlat
+// Google login start
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
 );
 
 // Google callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: "https://momentum02.vercel.app/login",
+  }),
   (req, res) => {
-    const frontendURL = process.env.FRONTEND_URL || "http://localhost:3000";
-    res.redirect(`${frontendURL}`);
+    // burada user artıq authenticated-dir
+    res.redirect("https://momentum02.vercel.app");
   }
 );
 
 // Logout
-router.get("/logout", (req, res, next) => {
-  req.logout((err: any) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
+router.get("/logout", (req, res) => {
+  req.logout(() => {
+    res.redirect("https://momentum02.vercel.app");
   });
 });
 

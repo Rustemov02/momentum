@@ -1,37 +1,39 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import dotenv from "dotenv";
 import User from "./models/User";
+import dotenv from "dotenv";
+
 dotenv.config();
 
-// Google OAuth
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: "/auth/google/callback",
+      callbackURL: process.env.GOOGLE_CALLBACK_URL!, // ABSOLUTE URL
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
+
         if (!user) {
-          console.log("AUTHED USER INFORMATION : ", profile, done);
           user = await User.create({
             googleId: profile.id,
-            email: profile.emails?.[0].value,
+            email: profile.emails?.[0]?.value || null,
             name: profile.displayName,
           });
         }
+
         return done(null, user);
       } catch (err) {
+        console.error("GOOGLE STRATEGY ERROR:", err);
         return done(err, null);
       }
     }
   )
 );
 
-// Session üçün serialize və deserialize
+// session-a yalnız ID yazılır
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });
