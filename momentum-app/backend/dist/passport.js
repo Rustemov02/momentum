@@ -5,31 +5,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const passport_google_oauth20_1 = require("passport-google-oauth20");
-const dotenv_1 = __importDefault(require("dotenv"));
 const User_1 = __importDefault(require("./models/User"));
+const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// Google OAuth
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback",
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         let user = await User_1.default.findOne({ googleId: profile.id });
         if (!user) {
             user = await User_1.default.create({
                 googleId: profile.id,
-                email: profile.emails?.[0].value,
+                email: profile.emails?.[0]?.value || null,
                 name: profile.displayName,
             });
         }
         return done(null, user);
     }
     catch (err) {
+        console.error("GOOGLE STRATEGY ERROR:", err);
         return done(err, null);
     }
 }));
-// Session üçün serialize və deserialize
+// session-a yalnız ID yazılır
 passport_1.default.serializeUser((user, done) => {
     done(null, user.id);
 });
