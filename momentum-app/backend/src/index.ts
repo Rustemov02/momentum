@@ -22,7 +22,12 @@ mongoose
   .catch((err) => console.log("MongoDB connection error : ", err));
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://momentum02.vercel.app",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Session setup (for Google OAuth)

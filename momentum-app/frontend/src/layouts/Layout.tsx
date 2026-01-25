@@ -60,48 +60,23 @@ const Layout = ({ children }: any) => {
     }
   };
 
-  const getCurrentUser = async () => {
-    const response = await fetch("https://momentum02.onrender.com/api/me", {
-      method: "GET",
-      credentials: "include", // session cookie üçün vacib
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-    return data.user; // { id, email, name }
-  };
-
-  const [user, setUser] = useState<{
-    id: string;
-    name: string;
-    email: string;
-  } | null>(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-    };
-    fetchUser();
+    // User məlumatını yoxla
+    fetch("http://momentum02.vercel.app/api/me", {
+      credentials: "include", // ÇOX VACİB - cookie göndərmək üçün
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUser(data.user);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
-
-  if (!user)
-    return (
-      <>
-        <p>Not logged in</p>
- <button
-          onClick={() => {
-            window.location.href =
-              "https://momentum02.onrender.com/auth/google";
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        >
-          Google ilə daxil ol
-        </button>      </>
-    );
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
@@ -117,15 +92,19 @@ const Layout = ({ children }: any) => {
           setSearchQuery={setSearchQuery}
           tabTitle={getTabTitle()}
         />
-        <button
-          onClick={() => {
-            window.location.href =
-              "https://momentum02.onrender.com/auth/google";
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        >
-          Google ilə daxil ol
-        </button>
+        {user ? (
+          <button>Log out</button>
+        ) : (
+          <button
+            onClick={() => {
+              window.location.href =
+                "https://momentum02.onrender.com/auth/google";
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+          >
+            Google ilə daxil ol
+          </button>
+        )}
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">{renderContent()}</div>
         </div>
