@@ -27,7 +27,7 @@ const Layout = ({ children }: any) => {
         {
           position: "bottom-right",
           autoClose: false, // Offline qalana qədər göstər
-        }
+        },
       );
     };
 
@@ -60,6 +60,36 @@ const Layout = ({ children }: any) => {
     }
   };
 
+  const getCurrentUser = async () => {
+    const response = await fetch("https://momentum02.onrender.com/api/me", {
+      method: "GET",
+      credentials: "include", // session cookie üçün vacib
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.user; // { id, email, name }
+  };
+
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) return <p>Not logged in</p>;
+
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
       <Sidebar
@@ -76,7 +106,8 @@ const Layout = ({ children }: any) => {
         />
         <button
           onClick={() => {
-            window.location.href = "https://momentum02.onrender.com/auth/google";
+            window.location.href =
+              "https://momentum02.onrender.com/auth/google";
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
         >

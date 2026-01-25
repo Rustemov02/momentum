@@ -12,6 +12,7 @@ declare global {
 
     interface Request {
       logout(done: (err: any) => void): void;
+      isAuthenticated(): boolean;
     }
   }
 }

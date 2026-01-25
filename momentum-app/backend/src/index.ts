@@ -31,12 +31,26 @@ app.use(
     secret: process.env.SESSION_SECRET || "secret-key",
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // Passport setup
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.get("/api/me", (req, res) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ user: null });
+  }
+  const u = (req as any).user;
+  res.json({
+    user: {
+      id: u._id,
+      email: u.email,
+      name: u.name,
+    },
+  });
+});
 
 // Test route
 app.get("/api/test", (req, res) => {
