@@ -94,7 +94,7 @@ const Layout = ({ children }: any) => {
           setSearchQuery={setSearchQuery}
           tabTitle={getTabTitle()}
         />
-        {user ? (
+        {user?.name ? (
           <button onClick={handleLogout}>Log out</button>
         ) : (
           <button

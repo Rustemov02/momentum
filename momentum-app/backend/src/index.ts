@@ -8,7 +8,7 @@ import passport from "passport";
 import Task from "./models/Task";
 import taskRoutes from "./routes/tasks";
 import authRoutes from "./routes/auth";
-import MongoStore from "connect-mongo"; 
+import MongoStore from "connect-mongo";
 dotenv.config();
 
 const app = express();
@@ -22,9 +22,17 @@ mongoose
   .catch((err) => console.log("MongoDB connection error : ", err));
 
 // Middleware
+
+const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5173"];
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS icazə vermədi"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -35,6 +43,7 @@ app.use(express.json());
 app.set("trust proxy", 1);
 
 // Session setup (for Google OAuth)
+const isProduction = process.env.NODE_ENV === "production";
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret-key",
@@ -45,9 +54,9 @@ app.use(
       collectionName: "sessions",
     }),
     cookie: {
-      secure: true, // HTTPS üçün mütləq
+      secure: isProduction, // HTTPS üçün
       httpOnly: true, // XSS təhlükəsizliyi
-      sameSite: "none", // Cross-origin üçün ƏN ƏSAS
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000, // 24 saat
       // domain: "momentum02.onrender.com", // Backend domain
     },
