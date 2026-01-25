@@ -24,8 +24,10 @@ mongoose
 // Middleware
 app.use(
   cors({
-    origin: "https://momentum02.vercel.app",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.use(express.json());
@@ -36,6 +38,13 @@ app.use(
     secret: process.env.SESSION_SECRET || "secret-key",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: true, // HTTPS üçün mütləq
+      httpOnly: true, // XSS təhlükəsizliyi
+      sameSite: "none", // Cross-origin üçün ƏN ƏSAS
+      maxAge: 24 * 60 * 60 * 1000, // 24 saat
+      domain: "momentum02.onrender.com", // Backend domain
+    },
   }),
 );
 
@@ -44,6 +53,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/api/me", (req, res) => {
+  console.log("Session REQ :", req); // Debug
+  console.log("isAuthenticated:", req.isAuthenticated?.()); // Debug
+
   if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ user: null });
   }

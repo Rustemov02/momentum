@@ -64,17 +64,18 @@ const Layout = ({ children }: any) => {
 
   useEffect(() => {
     // User məlumatını yoxla
-    fetch("http://momentum02.vercel.app/api/me", {
+    fetch("https://momentum02.onrender.com/api/me", {
       credentials: "include", // ÇOX VACİB - cookie göndərmək üçün
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.user) {
           setUser(data.user);
+           console.log("AUTHED User:", data.user);
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error("AUTH ERROR : " , err);
       });
   }, []);
 
