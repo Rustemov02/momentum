@@ -88,7 +88,20 @@ const Layout = ({ children }: any) => {
     fetchUser();
   }, []);
 
-  if (!user) return <p>Not logged in</p>;
+  if (!user)
+    return (
+      <>
+        <p>Not logged in</p>
+ <button
+          onClick={() => {
+            window.location.href =
+              "https://momentum02.onrender.com/auth/google";
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        >
+          Google ilə daxil ol
+        </button>      </>
+    );
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
