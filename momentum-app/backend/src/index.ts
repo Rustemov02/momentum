@@ -8,7 +8,7 @@ import passport from "passport";
 import Task from "./models/Task";
 import taskRoutes from "./routes/tasks";
 import authRoutes from "./routes/auth";
-
+import MongoStore from "connect-mongo"; 
 dotenv.config();
 
 const app = express();
@@ -32,18 +32,24 @@ app.use(
 );
 app.use(express.json());
 
+app.set("trust proxy", 1);
+
 // Session setup (for Google OAuth)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret-key",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
     cookie: {
       secure: true, // HTTPS üçün mütləq
       httpOnly: true, // XSS təhlükəsizliyi
       sameSite: "none", // Cross-origin üçün ƏN ƏSAS
       maxAge: 24 * 60 * 60 * 1000, // 24 saat
-      domain: "momentum02.onrender.com", // Backend domain
+      // domain: "momentum02.onrender.com", // Backend domain
     },
   }),
 );

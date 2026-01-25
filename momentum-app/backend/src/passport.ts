@@ -11,6 +11,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       callbackURL: process.env.GOOGLE_CALLBACK_URL!,
+      proxy: true,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -29,13 +30,13 @@ passport.use(
         console.error("GOOGLE STRATEGY ERROR:", err);
         return done(err, null);
       }
-    }
-  )
+    },
+  ),
 );
 
 // session-a yalnız ID yazılır
 passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+  done(null, user._id);
 });
 
 passport.deserializeUser(async (id, done) => {

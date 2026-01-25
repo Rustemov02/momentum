@@ -24,9 +24,14 @@ router.get(
 );
 
 // Logout
-router.get("/logout", (req, res) => {
-  req.logout(() => {
-    res.redirect(`${process.env.FRONTEND_URL}`);
+router.get("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+
+    req.session.destroy((err) => {
+      res.clearCookie("connect.sid");
+      res.redirect(`${process.env.FRONTEND_URL}`);
+    });
   });
 });
 

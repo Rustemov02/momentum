@@ -6,6 +6,7 @@ import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import Tags from "@/pages/Tags";
 import { toast } from "react-toastify";
+import { apiRequest } from "@/utils/api";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -60,24 +61,24 @@ const Layout = ({ children }: any) => {
     }
   };
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // User məlumatını yoxla
-    fetch("https://momentum02.onrender.com/api/me", {
-      credentials: "include", // ÇOX VACİB - cookie göndərmək üçün
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setUser(data.user);
-           console.log("AUTHED User:", data.user);
-        }
-      })
-      .catch((err) => {
-        console.error("AUTH ERROR : " , err);
-      });
+    const checkAuth = async () => {
+      try {
+        const res = await apiRequest("/api/me", { method: "GET" });
+        setUser(res.data.user);
+      } catch (err) {
+        setUser(null);
+      } finally {
+      }
+    };
+    checkAuth();
   }, []);
+
+  const handleLogout = () => {
+    window.location.href = "https://momentum02.onrender.com/auth/logout";
+  };
 
   return (
     <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
@@ -94,7 +95,7 @@ const Layout = ({ children }: any) => {
           tabTitle={getTabTitle()}
         />
         {user ? (
-          <button>Log out</button>
+          <button onClick={handleLogout}>Log out</button>
         ) : (
           <button
             onClick={() => {

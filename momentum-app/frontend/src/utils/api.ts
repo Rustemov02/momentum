@@ -15,7 +15,7 @@ export const apiRequest = async (
   { method = "GET", body, headers = {} }: ApiRequestOptions = {}
 ) => {
   const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
-  try {
+  try { 
     // Default başlıqlar (headers)
     const config = {
       method,
@@ -23,6 +23,7 @@ export const apiRequest = async (
         "Content-Type": "application/json",
         ...headers,
       },
+      credentials: "include"
     };
 
     // Əgər body varsa (məsələn POST sorğusunda), onu JSON-a çevirib əlavə edirik
