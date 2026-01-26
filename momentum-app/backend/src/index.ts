@@ -68,8 +68,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/api/me", (req, res) => {
-  console.log("Session REQ :", req); // Debug
-  console.log("isAuthenticated:", req.isAuthenticated?.()); // Debug
 
   if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ user: null });
@@ -83,12 +81,7 @@ app.get("/api/me", (req, res) => {
     },
   });
 });
-
-// Test route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Backend is working" });
-});
-
+ 
 // Routes
 app.use("/tasks", taskRoutes);
 app.use("/auth", authRoutes);

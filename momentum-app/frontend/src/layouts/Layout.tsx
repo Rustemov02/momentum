@@ -13,6 +13,7 @@ const Layout = ({ children }: any) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const BASE_URL = import.meta.env.BASE_URL;
 
   useEffect(() => {
     const handleOnline = () => {
@@ -62,25 +63,32 @@ const Layout = ({ children }: any) => {
   };
 
   const [user, setUser] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-   const checkAuth = async () => {
-    try {
-      const res = await apiRequest("/api/me", { method: "GET" });
-      if (res && res.user) {
-        setUser(res.user);
-        console.log("İstifadəçi tapıldı:", res.user);
+    const checkAuth = async () => {
+      try {
+        setIsLoading(true);
+        const res = await apiRequest("/api/me", { method: "GET" });
+        if (res && res.user) {
+          setUser(res.user);
+          console.log("İstifadəçi tapıldı:", res.user);
+          setIsAuthenticated(true);
+        }
+      } catch (err) {
+        setUser(null);
+        console.log("Error : ", err);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      setUser(null);
-      console.log('Error : ', err);
-    }
-  };
+    };
     checkAuth();
   }, []);
 
   const handleLogout = () => {
-    window.location.href = "https://momentum02.onrender.com/auth/logout";
+    window.location.href = `${BASE_URL}/auth/logout`;
   };
 
   return (
@@ -97,13 +105,14 @@ const Layout = ({ children }: any) => {
           setSearchQuery={setSearchQuery}
           tabTitle={getTabTitle()}
         />
-        {user?.name ? (
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : isAuthenticated && user ? (
           <button onClick={handleLogout}>Log out</button>
         ) : (
           <button
             onClick={() => {
-              window.location.href =
-                "https://momentum02.onrender.com/auth/google";
+              window.location.href = `${BASE_URL}/auth/google`;
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
           >

@@ -20,6 +20,7 @@ router.get(
   (req, res) => {
     // burada user artıq authenticated-dir
     res.redirect(`${process.env.FRONTEND_URL}`);
+    console.log(process.env.FRONTEND_URL)
   },
 );
 
