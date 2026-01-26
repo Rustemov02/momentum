@@ -13,7 +13,7 @@ const Layout = ({ children }: any) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const BASE_URL = import.meta.env.BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   useEffect(() => {
     const handleOnline = () => {
