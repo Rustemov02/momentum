@@ -64,15 +64,18 @@ const Layout = ({ children }: any) => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await apiRequest("/api/me", { method: "GET" });
-        setUser(res.data.user);
-      } catch (err) {
-        setUser(null);
-      } finally {
+   const checkAuth = async () => {
+    try {
+      const res = await apiRequest("/api/me", { method: "GET" });
+      if (res && res.user) {
+        setUser(res.user);
+        console.log("İstifadəçi tapıldı:", res.user);
       }
-    };
+    } catch (err) {
+      setUser(null);
+      console.log('Error : ', err);
+    }
+  };
     checkAuth();
   }, []);
 
