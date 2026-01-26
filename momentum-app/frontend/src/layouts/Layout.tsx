@@ -7,6 +7,7 @@ import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import Tags from "@/pages/Tags";
 import { toast } from "react-toastify";
 import { apiRequest } from "@/utils/api";
+import { GoogleLoginModal } from "@/components/Dialogs/GoogleLoginModal";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
@@ -28,7 +29,7 @@ const Layout = ({ children }: any) => {
         "⚠️ İnternet bağlantınız kəsildi. Keşlənmiş məlumatlar göstərilir.",
         {
           position: "bottom-right",
-          autoClose: false, // Offline qalana qədər göstər
+          autoClose: 1000, // Offline qalana qədər göstər
         },
       );
     };
@@ -49,6 +50,7 @@ const Layout = ({ children }: any) => {
   };
 
   const renderContent = () => {
+    if (!isAuthenticated) return;
     switch (activeTab) {
       case "notes":
         return (
@@ -105,20 +107,7 @@ const Layout = ({ children }: any) => {
           setSearchQuery={setSearchQuery}
           tabTitle={getTabTitle()}
         />
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : isAuthenticated && user ? (
-          <button onClick={handleLogout}>Log out</button>
-        ) : (
-          <button
-            onClick={() => {
-              window.location.href = `${BASE_URL}/auth/google`;
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-          >
-            Google ilə daxil ol
-          </button>
-        )}
+        
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">{renderContent()}</div>
         </div>
@@ -127,6 +116,13 @@ const Layout = ({ children }: any) => {
       <CreateNoteButton onClick={setIsCreateDialogOpen} />
 
       {children}
+
+      <GoogleLoginModal
+        isOpen={!isAuthenticated}
+        onLogin={() => {
+          window.location.href = `${BASE_URL}/auth/google`;
+        }}
+      />
     </div>
   );
 };
