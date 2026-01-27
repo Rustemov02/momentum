@@ -1,6 +1,8 @@
 import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import { FileText, Menu, X } from "lucide-react";
 import type { FC } from "react";
+import { Button } from "../Button/Button";
+import { BASE_URL } from "@/constants/variables";
 
 interface SidebarProps {
   activeTab: string;
@@ -14,6 +16,10 @@ const Sidebar: FC<SidebarProps> = ({
   isMobileOpen,
   onMobileToggle,
 }) => {
+  const handleLogout = () => {
+    window.location.href = `${BASE_URL}/auth/logout`;
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -87,7 +93,14 @@ const Sidebar: FC<SidebarProps> = ({
           {/* Footer */}
           <div className="mt-auto pt-6 border-t border-gray-800/50">
             <div className="text-gray-500 text-sm">
-              <p>Quick capture, organized.</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
+              >
+                Log out
+              </Button>
             </div>
           </div>
         </div>
