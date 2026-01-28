@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { GoogleLoginModal } from "../Dialogs/GoogleLoginModal";
 import { BASE_URL } from "@/constants/variables";
 import { toast } from "react-toastify";
+import { NoInternetModal } from "../Dialogs/NoInternetModal";
+import Loader from "../Loader";
 
 const AuthGate = ({ children }: { children: any }) => {
   const [localAuth, setLocalAuth] = useState<string | null>(null);
@@ -59,8 +61,22 @@ const AuthGate = ({ children }: { children: any }) => {
     };
   }, []);
 
+  if (isLoading)
+    return (
+      <div className="h-dvh flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+
   if (localAuth === "false" && !navigator.onLine) {
-    return <p>İnternetə qoşulmalı və qeydiyyatdan keçməlisiniz</p>;
+    return (
+      <NoInternetModal
+        isOpen={true}
+        onRetry={() => {
+          window.location.href = `${BASE_URL}/auth/google`;
+        }}
+      />
+    );
   } else if (localAuth === "false" && navigator.onLine) {
     return (
       <GoogleLoginModal

@@ -4,12 +4,14 @@ import { ToastContainer } from "react-toastify";
 
 const App = ({ children }: any) => {
   return (
-    <AuthGate>
-      <Layout>
-        {children}
-        <ToastContainer />
-      </Layout>
-    </AuthGate>
+    <div className="bg-linear-to-br from-gray-950 via-gray-900 to-gray-950">
+      <AuthGate>
+        <Layout>
+          {children}
+          <ToastContainer />
+        </Layout>
+      </AuthGate>
+    </div>
   );
 };
 

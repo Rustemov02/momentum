@@ -35,7 +35,7 @@ const Layout = ({ children }: any) => {
  
 
   return (
-    <div className="flex h-screen bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}

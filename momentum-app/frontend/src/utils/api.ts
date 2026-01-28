@@ -12,10 +12,10 @@ interface ApiRequestOptions {
 
 export const apiRequest = async (
   endpoint: string,
-  { method = "GET", body, headers = {} }: ApiRequestOptions = {}
+  { method = "GET", body, headers = {} }: ApiRequestOptions = {},
 ) => {
   const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
-  try { 
+  try {
     // Default başlıqlar (headers)
     const config = {
       method,
@@ -23,7 +23,7 @@ export const apiRequest = async (
         "Content-Type": "application/json",
         ...headers,
       },
-      credentials: "include"
+      credentials: "include",
     };
 
     // Əgər body varsa (məsələn POST sorğusunda), onu JSON-a çevirib əlavə edirik
@@ -36,13 +36,13 @@ export const apiRequest = async (
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.message || `Xəta baş verdi: ${response.status}`
+        errorData.message || `Something went wrong : ${response.status}`,
       );
     }
 
     return await response.json();
   } catch (error) {
-    console.error("API Sorğu Xətası:", error);
+    console.error("API Error :", error);
     throw error;
   }
 };
