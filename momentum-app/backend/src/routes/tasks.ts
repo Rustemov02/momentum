@@ -5,7 +5,9 @@ const router = express.Router();
 
 // Get All Tasks
 router.get("/", async (req: Request, res: Response) => {
-  const tasks = await Task.find().sort({ createdAt: -1 });
+  const user = (req as any).user;
+
+  const tasks = await Task.find({ userId: user._id }).sort({ createdAt: -1 });
   console.log("Tasks from MongoDB : ", tasks);
   res.json(tasks);
 });
@@ -13,6 +15,7 @@ router.get("/", async (req: Request, res: Response) => {
 // POST - create task
 router.post("/", async (req: Request, res: Response) => {
   try {
+    const user = (req as any).user;
     const { title, description, tags, expiryTime } = req.body;
 
     let expiresAt = null;
@@ -34,7 +37,13 @@ router.post("/", async (req: Request, res: Response) => {
           expiresAt = null;
       }
     }
-    const task = new Task({ title, description, tags, expiresAt });
+    const task = new Task({
+      title,
+      description,
+      tags,
+      expiresAt,
+      userId: user._id,
+    });
     await task.save();
     res.status(201).json(task);
   } catch (err) {
@@ -46,10 +55,14 @@ router.post("/", async (req: Request, res: Response) => {
 // DELETE - delete task
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
+    const user = (req as any).user;
     const { id } = req.params;
 
     // ID-yə görə tapır və silir
-    const deletedTask = await Task.findByIdAndDelete(id);
+    const deletedTask = await Task.findOneAndDelete({
+      _id: id,
+      userId: user._id,
+    });
 
     // Əgər tapılmasa (null qayıtsa) 404 qaytarır
     if (!deletedTask) {
@@ -57,7 +70,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     }
 
     // Uğurlu olsa mesaj və silinən ID-ni qaytarır
-    res.json({ message: "Task deleted successfully", id: deletedTask._id });
+    res.json({ message: "Task deleted successfully", id });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Failed to delete task" });
@@ -67,6 +80,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
 // PUT - update task
 router.put("/:id", async (req: Request, res: Response) => {
   try {
+    const user = (req as any).user;
     const { id } = req.params;
     const { title, description, tags } = req.body;
 
@@ -74,13 +88,13 @@ router.put("/:id", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      id,
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: id, userId: user._id },
       { title, description, ...(tags !== undefined && { tags }) },
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     if (!updatedTask) {
@@ -97,7 +111,10 @@ router.put("/:id", async (req: Request, res: Response) => {
 // Get all tags with their tasks using aggregation
 router.get("/tags", async (req: Request, res: Response) => {
   try {
+    const user = (req as any).user;
+    
     const tagsWithTasks = await Task.aggregate([
+      { $match: { userId: user._id } },
       { $unwind: "$tags" },
       {
         $group: {

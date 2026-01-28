@@ -23,6 +23,13 @@ mongoose
 
 // Middleware
 
+const requireAuth = (req: any, res: any, next: any) => {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  next();
+};
+
 const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5173"];
 app.use(
   cors({
@@ -68,7 +75,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/api/me", (req, res) => {
-
   if (!req.isAuthenticated || !req.isAuthenticated()) {
     return res.status(401).json({ user: null });
   }
@@ -81,9 +87,9 @@ app.get("/api/me", (req, res) => {
     },
   });
 });
- 
+
 // Routes
-app.use("/tasks", taskRoutes);
+app.use("/tasks", requireAuth, taskRoutes);
 app.use("/auth", authRoutes);
 
 app.listen(PORT, () => {

@@ -17,6 +17,7 @@ const Sidebar: FC<SidebarProps> = ({
   onMobileToggle,
 }) => {
   const handleLogout = () => {
+    if (!navigator.onLine) return;
     window.location.href = `${BASE_URL}/auth/logout`;
   };
 
