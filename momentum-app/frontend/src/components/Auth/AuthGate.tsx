@@ -77,9 +77,9 @@ const AuthGate = ({ children }: { children: any }) => {
     return (
       <NoInternetModal
         isOpen
-        onRetry={() => {
-          window.location.href = `${BASE_URL}/auth/google`;
-        }}
+        // onRetry={() => {
+        //   window.location.href = `${BASE_URL}/auth/google`;
+        // }}
       />
     );
   }
