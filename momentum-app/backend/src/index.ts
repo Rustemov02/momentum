@@ -75,7 +75,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/api/me", (req, res) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  if (!req.session || !req.session.passport?.user) {
     return res.status(401).json({ user: null });
   }
   const u = (req as any).user;
