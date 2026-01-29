@@ -21,14 +21,20 @@ const Notes = ({
   const [loading, setLoading] = useState(true);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const CACHED_TASKS_KEY = "cachedTask";
 
   // ! FETCH ALL TASKS FROM DB
   const fetchTasks = async () => {
     try {
       const tasks = await apiRequest("/tasks");
       setTaskData(tasks);
+      localStorage.setItem(CACHED_TASKS_KEY, JSON.stringify(tasks));
     } catch (err) {
       console.error(err);
+      const cached = localStorage.getItem(CACHED_TASKS_KEY);
+      if (cached) {
+        setTaskData(JSON.parse(cached));
+      }
     } finally {
       setLoading(false);
     }
@@ -88,11 +94,10 @@ const Notes = ({
       expiryTime: payload.expiryTime,
     };
 
+    const newData = [tempNote, ...taskData];
     // Dərhal UI-da göstər (Optimistic UI)
-    setTaskData((prev) => [tempNote, ...prev]);
-
-    console.log("Created NOte : ", tempNote);
-  
+    setTaskData(newData);
+    localStorage.setItem(CACHED_TASKS_KEY, JSON.stringify(newData));
 
     try {
       const response = await apiRequest("/tasks", {
@@ -111,8 +116,8 @@ const Notes = ({
                 title: response.title,
                 expiryTime: response.expiryTime,
               }
-            : task
-        )
+            : task,
+        ),
       );
       toast.success("Task added successfully");
     } catch (error) {
@@ -120,13 +125,13 @@ const Notes = ({
 
       // Offline olarsa localStorage-ə yaz
       const pending = JSON.parse(
-        localStorage.getItem(PENDING_TASKS_KEY) || "[]"
+        localStorage.getItem(PENDING_TASKS_KEY) || "[]",
       );
       pending.push({ action: "create", payload, tempId });
       localStorage.setItem(PENDING_TASKS_KEY, JSON.stringify(pending));
 
       toast.warning(
-        "Offline: Task yadda saxlanıldı, internet qayıdanda əlavə ediləcək"
+        "Offline: Task yadda saxlanıldı, internet qayıdanda əlavə ediləcək",
       );
     }
   };
@@ -146,7 +151,7 @@ const Notes = ({
 
       // Offline olarsa localStorage-ə yaz
       const pending = JSON.parse(
-        localStorage.getItem(PENDING_TASKS_KEY) || "[]"
+        localStorage.getItem(PENDING_TASKS_KEY) || "[]",
       );
       pending.push({ action: "delete", id: noteId });
       localStorage.setItem(PENDING_TASKS_KEY, JSON.stringify(pending));
@@ -163,7 +168,9 @@ const Notes = ({
   const handleUpdateNote = (id: string, updatedData: Note[]) => {
     console.log(updatedData);
     setTaskData((prev) =>
-      prev.map((task) => (task._id === id ? { ...task, ...updatedData } : task))
+      prev.map((task) =>
+        task._id === id ? { ...task, ...updatedData } : task,
+      ),
     );
   };
 
