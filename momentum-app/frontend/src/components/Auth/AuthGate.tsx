@@ -7,32 +7,37 @@ import { NoInternetModal } from "../Dialogs/NoInternetModal";
 import Loader from "../Loader";
 
 const AuthGate = ({ children }: { children: any }) => {
-  const [localAuth, setLocalAuth] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [cachedUser, setCachedUser] = useState<any | null>(null);
 
   useEffect(() => {
-    setLocalAuth(localStorage.getItem("isAuthenticated"));
+    const localUser = localStorage.getItem("cachedUser");
+
+    if (localUser) {
+      setCachedUser(JSON.parse(localUser));
+    }
+
+    if (!navigator.onLine) {
+      setIsLoading(false);
+      return;
+    }
 
     const checkAuth = async () => {
       try {
         setIsLoading(true);
         const res = await apiRequest("/api/me", { method: "GET" });
-        if (res && res.user) {
-          setUser(res.user);
-          console.log("İstifadəçi tapıldı:", res.user);
-          localStorage.setItem("isAuthenticated", "true");
-          setLocalAuth("true");
+        if (res?.user) {
+          localStorage.setItem("cachedUser", JSON.stringify(res.user));
+          setCachedUser(res.user);
         }
-      } catch (err) {
-        setUser(null);
-        console.log("Error : ", err);
-        localStorage.setItem("isAuthenticated", "false");
-        setLocalAuth("false");
+      } catch {
+        localStorage.removeItem("cachedUser");
+        setCachedUser(null);
       } finally {
         setIsLoading(false);
       }
     };
+
     checkAuth();
 
     const handleOnline = () => {
@@ -68,16 +73,18 @@ const AuthGate = ({ children }: { children: any }) => {
       </div>
     );
 
-  if (localAuth === "false" && !navigator.onLine) {
+  if (!cachedUser && !navigator.onLine) {
     return (
       <NoInternetModal
-        isOpen={true}
+        isOpen
         onRetry={() => {
           window.location.href = `${BASE_URL}/auth/google`;
         }}
       />
     );
-  } else if (localAuth === "false" && navigator.onLine) {
+  }
+
+  if (!cachedUser && navigator.onLine) {
     return (
       <GoogleLoginModal
         isOpen={true}
@@ -88,7 +95,7 @@ const AuthGate = ({ children }: { children: any }) => {
     );
   }
 
-  return <>{children}</>;
+  return children;
 };
 
 export default AuthGate;
