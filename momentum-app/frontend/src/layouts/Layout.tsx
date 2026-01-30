@@ -5,13 +5,15 @@ import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import Tags from "@/pages/Tags";
+import { AIChatbot } from "@/components/Dialogs/AIChatbot";
+import { ChatbotButton } from "@/components/Button/ChatBotButton";
 
 const Layout = ({ children }: any) => {
   const [activeTab, setActiveTab] = useState("notes");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const getTabTitle = () => {
     const item = SIDEBAR_ITEMS.find((i) => i.id === activeTab);
 
@@ -31,8 +33,6 @@ const Layout = ({ children }: any) => {
         return <Tags />;
     }
   };
-
- 
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -57,7 +57,17 @@ const Layout = ({ children }: any) => {
         </div>
       </main>
 
+      <AIChatbot
+        isOpen={isChatbotOpen}
+        onClose={() => setIsChatbotOpen(false)}
+      />
+      <div className="flex flex-col gap-4 border-4">
+      <ChatbotButton
+        isOpen={isChatbotOpen}
+        onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+      />
       <CreateNoteButton onClick={setIsCreateDialogOpen} />
+      </div>
     </div>
   );
 };
