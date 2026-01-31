@@ -83,8 +83,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
 
     try {
       const aiResponseText = await sendMessageToGemini(
-        currentInput,
-        // "Bünyamin",
+        currentInput, 
       );
 
       const aiResponse: Message = {

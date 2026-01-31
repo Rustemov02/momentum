@@ -4,19 +4,14 @@ import { NoteDetailDialog } from "@/components/Dialogs/NoteDetailDialog";
 import Loader from "@/components/Loader";
 import { NoteCard, type Note } from "@/components/NoteCard";
 import SearchResult from "@/components/SearchResult";
+import { useLayout } from "@/contexts/LayoutContext";
 import { apiRequest } from "@/utils/api";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const PENDING_TASKS_KEY = "pendingTasks";
 
-const Notes = ({
-  isCreateDialogOpen,
-  setIsCreateDialogOpen,
-}: {
-  isCreateDialogOpen: boolean;
-  setIsCreateDialogOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+const Notes = () => {
   const [taskData, setTaskData] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
@@ -173,6 +168,8 @@ const Notes = ({
       ),
     );
   };
+
+  const { isCreateDialogOpen, setIsCreateDialogOpen } = useLayout();
 
   if (loading) return <Loader />;
 

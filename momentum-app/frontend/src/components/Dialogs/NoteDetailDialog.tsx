@@ -24,7 +24,7 @@ interface NoteDetailDialogProps {
   note: Note;
   isOpen: boolean;
   onClose: () => void;
-  onUpdate?: (id: string, updatedNote: Partial<Note>) => void;
+  onUpdate?: (id: string, updatedNote: Note[]) => void;
   onDelete?: (id: string) => void;
 }
 

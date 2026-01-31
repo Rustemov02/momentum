@@ -57,17 +57,16 @@ async function retryWithDelay<T>(
   throw new Error("Maksimum cəhd sayına çatıldı");
 }
 
-export async function sendMessageToGemini(
-  message: string,
-  userName?: string,
-): Promise<string> {
+const userName = JSON.parse(localStorage.getItem("cachedUser") || "{}");
+
+export async function sendMessageToGemini(message: string): Promise<string> {
   try {
     if (conversationHistory.length === 0) {
       conversationHistory.push({
         role: "user",
         parts: [
           {
-            text: `Sən Momentum tətbiqinin AI köməkçisisən. Yalnız Momentum haqqında (qeyd, tag, axtarış, edit, silmək) qısa cavab ver. Başqa mövzularda "Mən yalnız Momentum haqqında kömək edə bilərəm" de.`,
+            text: `Sən Momentum tətbiqinin AI köməkçisisən.Səninlə danışan istifadəçinin adı ${userName?.name.split(" ")[0]}-dır.Adı ilə müraciət et. Yalnız Momentum haqqında (qeyd, tag, axtarış, edit, silmək) qısa cavab ver. Başqa mövzularda "Mən yalnız Momentum haqqında kömək edə bilərəm" de.`,
           },
         ],
       });

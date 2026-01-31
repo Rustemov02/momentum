@@ -1,44 +1,57 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import Sidebar from "../components/Sidebar/Sidebar";
-import Notes from "@/pages/Notes";
 import { SIDEBAR_ITEMS } from "@/constants/sidebar";
 import Header from "@/components/Header/Header";
 import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
-import Tags from "@/pages/Tags";
 import { AIChatbot } from "@/components/Dialogs/AIChatbot";
 import { ChatbotButton } from "@/components/Button/ChatBotButton";
+import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 
-const Layout = ({ children }: any) => {
-  const [activeTab, setActiveTab] = useState("notes");
+const LayoutContent = () => {
+  // const [activeTab, setActiveTab] = useState("notes");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  const location = useLocation();
+  const activeTab = location.pathname.split("/")[1] || "notes";
+  const navigate = useNavigate();
   const getTabTitle = () => {
     const item = SIDEBAR_ITEMS.find((i) => i.id === activeTab);
 
     return item ? item?.label : "notes";
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "notes":
-        return (
-          <Notes
-            isCreateDialogOpen={isCreateDialogOpen}
-            setIsCreateDialogOpen={setIsCreateDialogOpen}
-          />
-        );
-      case "tags":
-        return <Tags />;
-    }
+  const {
+    searchQuery,
+    setSearchQuery,
+    isCreateDialogOpen,
+    setIsCreateDialogOpen,
+  } = useLayout();
+
+  const handleTabChange = (tabId: string) => {
+    navigate(`/${tabId}`);
   };
+
+  // const renderContent = () => {
+  //   switch (activeTab) {
+  //     case "notes":
+  //       return (
+  //         <Notes
+  //           isCreateDialogOpen={isCreateDialogOpen}
+  //           setIsCreateDialogOpen={setIsCreateDialogOpen}
+  //         />
+  //       );
+  //     case "tags":
+  //       return <Tags />;
+  //   }
+  // };
 
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         isMobileOpen={isMobileSidebarOpen}
         onMobileToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
       />
@@ -51,8 +64,9 @@ const Layout = ({ children }: any) => {
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">
+            <Outlet />
             {/* {children} */}
-            {renderContent()}
+            {/* {renderContent()} */}
           </div>
         </div>
       </main>
@@ -62,13 +76,22 @@ const Layout = ({ children }: any) => {
         onClose={() => setIsChatbotOpen(false)}
       />
       <div className="flex flex-col gap-4 border-4">
-      <ChatbotButton
-        isOpen={isChatbotOpen}
-        onClick={() => setIsChatbotOpen(!isChatbotOpen)}
-      />
-      <CreateNoteButton onClick={setIsCreateDialogOpen} />
+        <ChatbotButton
+          isOpen={isChatbotOpen}
+          onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+        />
+
+        <CreateNoteButton onClick={setIsCreateDialogOpen} />
       </div>
     </div>
+  );
+};
+
+const Layout = () => {
+  return (
+    <LayoutProvider>
+      <LayoutContent />
+    </LayoutProvider>
   );
 };
 
