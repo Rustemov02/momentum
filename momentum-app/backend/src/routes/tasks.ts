@@ -19,7 +19,7 @@ router.post("/", async (req: Request, res: Response) => {
     const { title, description, tags, expiryTime } = req.body;
 
     const expiresAt =
-      (expiryTime ?? expiryTime !== "never")
+      expiryTime && expiryTime !== "never"
         ? new Date(Date.now() + parseInt(expiryTime))
         : null;
 
