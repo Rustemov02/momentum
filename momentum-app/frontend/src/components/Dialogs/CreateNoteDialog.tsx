@@ -11,7 +11,7 @@ export interface TaskPayloadType {
   title: string;
   description: string;
   tags: string[];
-  expiryTime: { label: string; value: string }[];
+  expiryTime: { label: string; value: string };
 }
 interface CreateNoteDialogProps {
   isOpen: boolean;
@@ -28,13 +28,13 @@ const CreateNoteDialog: FC<CreateNoteDialogProps> = ({
   const initialTaskData = {
     title: "",
     description: "",
-    tags: [],
-    expiryTime: [],
+    tags: [] as string[],
+    expiryTime: TIME_DATA[0],
   };
 
   // const [expiryTime, setExpiryTime] = useState<string>("never");
 
-  const [newTaskData, setNewTaskData] =   
+  const [newTaskData, setNewTaskData] =
     useState<TaskPayloadType>(initialTaskData);
 
   const { title, description, tags } = newTaskData;
@@ -172,14 +172,19 @@ const CreateNoteDialog: FC<CreateNoteDialogProps> = ({
           </div>
 
           {/* Timer for notes */}
-          {/* <div className="">
+          <div className="">
             <Select
               label="Auto-delete after"
               options={TIME_DATA}
               value={newTaskData.expiryTime}
-              setValue={() => {}}
+              setValue={(option) =>
+                setNewTaskData((prev) => ({
+                  ...prev,
+                  expiryTime: option,
+                }))
+              }
             />
-          </div> */}
+          </div>
         </div>
 
         {/* Footer */}

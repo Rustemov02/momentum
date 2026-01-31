@@ -86,7 +86,7 @@ const Notes = () => {
       tags: payload.tags,
       description: payload.description,
       title: payload.title,
-      expiryTime: payload.expiryTime,
+      expiryTime: payload.expiryTime.value,
     };
 
     const newData = [tempNote, ...taskData];

@@ -8,10 +8,12 @@ export const SIDEBAR_ITEMS = [
 ];
 
 export const TIME_DATA = [
-  { label: "never", value: "never" },
-  { label: "1 hour", value: "1hour" },
-  { label: "3 days", value: "3days" },
-  { label: "7 days", value: "7days" },
-] as const
+  { label: "Never", value: "never" },
+  { label: "1 Hour", value: "3600000" },        
+  { label: "6 Hours", value: "21600000" },       
+  { label: "24 Hours", value: "86400000" },      
+  { label: "7 Days", value: "604800000" },       
+  { label: "30 Days", value: "2592000000" }, 
+]
 
 

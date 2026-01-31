@@ -18,25 +18,11 @@ router.post("/", async (req: Request, res: Response) => {
     const user = (req as any).user;
     const { title, description, tags, expiryTime } = req.body;
 
-    let expiresAt = null;
+    const expiresAt =
+      (expiryTime ?? expiryTime !== "never")
+        ? new Date(Date.now() + parseInt(expiryTime))
+        : null;
 
-    if (expiryTime && expiryTime !== "never") {
-      const now = new Date();
-
-      switch (expiryTime) {
-        case "24hours":
-          expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-          break;
-        case "3days":
-          expiresAt = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-          break;
-        case "7days":
-          expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-          break;
-        default:
-          expiresAt = null;
-      }
-    }
     const task = new Task({
       title,
       description,
@@ -112,7 +98,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 router.get("/tags", async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    
+
     const tagsWithTasks = await Task.aggregate([
       { $match: { userId: user._id } },
       { $unwind: "$tags" },
