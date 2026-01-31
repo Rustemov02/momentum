@@ -80,6 +80,7 @@ const Notes = () => {
   //! CREATE TASK
   const handleCreateNote = async (payload: TaskPayloadType) => {
     const tempId = `temp-${Date.now()}`;
+
     const tempNote: Note = {
       _id: tempId,
       createdAt: new Date().toISOString(),
@@ -94,10 +95,11 @@ const Notes = () => {
     setTaskData(newData);
     localStorage.setItem(CACHED_TASKS_KEY, JSON.stringify(newData));
 
+    const { expiryTime, ...rest } = payload;
     try {
       const response = await apiRequest("/tasks", {
         method: "POST",
-        body: payload,
+        body: { ...rest, expirtTime: expiryTime.value },
       });
 
       setTaskData((prev) =>
