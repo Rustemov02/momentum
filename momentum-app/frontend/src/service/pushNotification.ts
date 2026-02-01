@@ -1,3 +1,5 @@
+import { apiRequest } from "@/utils/api";
+
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
 // Base64 → Uint8Array converter
@@ -27,10 +29,8 @@ export const setupPushNotification = async () => {
   });
 
   // Step 4: Bu adres backend-a göndər
-  await fetch("/subscription", {
+  await apiRequest("/subscription", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify(subscription.toJSON()),
   });
 };
