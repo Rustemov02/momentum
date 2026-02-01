@@ -33,9 +33,10 @@ import { toast } from "react-toastify";
 interface NoteDetailDialogProps {
   note: Note;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onUpdate?: (id: string, updatedNote: Note[]) => void;
   onDelete?: (id: string) => void;
+  isPublic?: boolean;
 }
 
 export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
@@ -44,6 +45,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   onClose,
   onUpdate,
   onDelete,
+  isPublic = false,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -143,8 +145,17 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
     });
 
     const data = await res;
-    toast.success("Link Copied Succesfully");
-    console.log("Share link:", data.shareLink);
+
+    if (data.shareLink) {
+      try {
+        navigator.clipboard.writeText(data.shareLink);
+        toast.success("Link Copied Succesfully");
+        console.log(data.shareLink);
+      } catch (err) {
+        console.log("COPIED ERROR : ", err);
+        toast.error("Failed to copy link.Try again later");
+      }
+    }
   };
 
   return (
@@ -188,35 +199,39 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   {!isEditing ? (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleShare}
-                        className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
-                      >
-                        <Share className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Share</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleEdit}
-                        className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
-                      >
-                        <Edit2 className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Edit</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        className="text-red-400 hover:text-red-300 cursor-pointer hover:bg-red-500/10 h-8 px-2 sm:px-3"
-                      >
-                        <Trash2 className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Delete</span>
-                      </Button>
-                    </>
+                    !isPublic && (
+                      <>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleShare}
+                          className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
+                        >
+                          <Share className="w-4 h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Share</span>
+                        </Button>
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleEdit}
+                          className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
+                        >
+                          <Edit2 className="w-4 h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Edit</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowDeleteConfirm(true)}
+                          className="text-red-400 hover:text-red-300 cursor-pointer hover:bg-red-500/10 h-8 px-2 sm:px-3"
+                        >
+                          <Trash2 className="w-4 h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Delete</span>
+                        </Button>
+                      </>
+                    )
                   ) : (
                     <>
                       <Button
