@@ -14,11 +14,18 @@ cron.schedule("* * * * *", async () => {
   const now = new Date();
   const fiveMinutesLater = new Date(now.getTime() + 5 * 60 * 1000);
 
+  console.log("🔍 Checking tasks...", {
+    now: now.toISOString(),
+    checkUntil: fiveMinutesLater.toISOString(),
+  });
+
   // 5 dəqiqə sonra silinəcək tasks tapar
   const tasks = await Task.find({
     expiresAt: { $gte: now, $lte: fiveMinutesLater },
     notified: false,
   });
+
+  console.log(`📦 Found ${tasks.length} tasks`);
 
   for (const task of tasks) {
     // Bu task-ın user-ının subscription tapar
