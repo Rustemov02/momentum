@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { X, Edit2, Trash2, Save, Tag, Clock, Plus, Tags } from "lucide-react";
+import {
+  X,
+  Edit2,
+  Trash2,
+  Save,
+  Tag,
+  Clock,
+  Plus,
+  Tags,
+  Share,
+} from "lucide-react";
 import { type Note } from "@/components/NoteCard/index";
 import { Button } from "@/components/Button/Button";
 import { Input } from "@/components/Input/Input";
@@ -125,6 +135,17 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
     setTagInput("");
   };
 
+  const handleShare = async () => {
+    const taskId = note._id;
+
+    const res = await apiRequest(`/api/tasks/${taskId}/share`, {
+      method: "POST",
+    });
+
+    const data = await res.json();
+    console.log("Share link:", data.shareLink);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && note && (
@@ -167,6 +188,15 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   {!isEditing ? (
                     <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleShare}
+                        className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
+                      >
+                        <Share className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Share</span>
+                      </Button>
                       <Button
                         variant="ghost"
                         size="sm"

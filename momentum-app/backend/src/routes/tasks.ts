@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import Task from "../models/Task";
+import { nanoid } from "nanoid";
 
 const router = express.Router();
 
@@ -91,6 +92,66 @@ router.put("/:id", async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Failed to update task" });
+  }
+});
+
+// GET - share task by token (public, no auth)
+router.get("/share/:token", async (req: Request, res: Response) => {
+  const { token } = req.params;
+
+  try {
+    // token əsasında task-u tapırıq
+    const task = await Task.findOne({
+      "share.token": token,
+      "share.isPublic": true,
+    });
+
+    if (!task) {
+      return res
+        .status(404)
+        .json({ message: "Task not found or link expired" });
+    }
+
+    // Yalnız read-only məlumat qaytarırıq
+    res.json({
+      title: task.title,
+      description: task.description,
+      tags: task.tags,
+      createdAt: task.createdAt,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to fetch shared task" });
+  }
+});
+
+router.post("/:id/share", async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user; // auth lazımdır, yalnız owner paylaşa bilər
+    const { id } = req.params;
+
+    // Task-u tapırıq
+    const task = await Task.findOne({ _id: id, userId: user._id });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Token yarat
+    task.share = {
+      isPublic: true,
+      token: nanoid(20), // unik token
+      permission: "view",
+    };
+
+    await task.save();
+
+    res.json({
+      message: "Task shared successfully",
+      shareLink: `${process.env.APP_URL}/share/${task.share.token}`, // frontend-ə göndər
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to share task" });
   }
 });
 

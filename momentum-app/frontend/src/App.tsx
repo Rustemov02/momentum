@@ -14,10 +14,8 @@ const App = () => {
 
   return (
     <div className="bg-linear-to-br from-gray-950 via-gray-900 to-gray-950">
-      <AuthGate>
         <RouterProvider router={router} />
         <ToastContainer />
-      </AuthGate>
     </div>
   );
 };

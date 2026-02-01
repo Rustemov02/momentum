@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITask extends Document {
-  userId : mongoose.Schema.Types.ObjectId;
+  userId: mongoose.Schema.Types.ObjectId;
   title: string;
   description: string;
   tags: string[];
@@ -9,6 +9,11 @@ export interface ITask extends Document {
   createdAt: Date;
   expiresAt?: Date;
   notified: boolean;
+  share?: {
+    isPublic: boolean;
+    token: string;
+    permission: "view" | "edit";
+  };
 }
 
 const TaskSchema: Schema = new Schema({
