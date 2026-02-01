@@ -32,7 +32,7 @@ cron.schedule("* * * * *", async () => {
     const subscription = await Subscription.findOne({
       userId: task.userId,
     });
-
+     console.log(`👤 User: ${task.userId}, Subscription: ${subscription ? "found" : "NOT FOUND"}`);
     if (!subscription) continue;
 
     try {
