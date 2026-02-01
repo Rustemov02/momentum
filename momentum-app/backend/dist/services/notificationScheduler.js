@@ -12,16 +12,22 @@ web_push_1.default.setVapidDetails(`mailto:${process.env.VAPID_EMAIL}`, process.
 node_cron_1.default.schedule("* * * * *", async () => {
     const now = new Date();
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60 * 1000);
+    console.log("🔍 Checking tasks...", {
+        now: now.toISOString(),
+        checkUntil: fiveMinutesLater.toISOString(),
+    });
     // 5 dəqiqə sonra silinəcək tasks tapar
     const tasks = await Task_1.default.find({
         expiresAt: { $gte: now, $lte: fiveMinutesLater },
         notified: false,
     });
+    console.log(`📦 Found ${tasks.length} tasks`);
     for (const task of tasks) {
         // Bu task-ın user-ının subscription tapar
         const subscription = await Subscription_1.default.findOne({
             userId: task.userId,
         });
+        console.log(`👤 User: ${task.userId}, Subscription: ${subscription ? "found" : "NOT FOUND"}`);
         if (!subscription)
             continue;
         try {

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const Task_1 = __importDefault(require("../models/Task"));
+const nanoid_1 = require("nanoid");
 const router = express_1.default.Router();
 // Get All Tasks
 router.get("/", async (req, res) => {
@@ -79,6 +80,59 @@ router.put("/:id", async (req, res) => {
     catch (err) {
         console.log(err);
         res.status(500).json({ message: "Failed to update task" });
+    }
+});
+// GET - share task by token (public, no auth)
+router.get("/share/:token", async (req, res) => {
+    const { token } = req.params;
+    try {
+        // token əsasında task-u tapırıq
+        const task = await Task_1.default.findOne({
+            "share.token": token,
+            "share.isPublic": true,
+        });
+        if (!task) {
+            return res
+                .status(404)
+                .json({ message: "Task not found or link expired" });
+        }
+        // Yalnız read-only məlumat qaytarırıq
+        res.json({
+            title: task.title,
+            description: task.description,
+            tags: task.tags,
+            createdAt: task.createdAt,
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Failed to fetch shared task" });
+    }
+});
+router.post("/:id/share", async (req, res) => {
+    try {
+        const user = req.user; // auth lazımdır, yalnız owner paylaşa bilər
+        const { id } = req.params;
+        // Task-u tapırıq
+        const task = await Task_1.default.findOne({ _id: id, userId: user._id });
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+        // Token yarat
+        task.share = {
+            isPublic: true,
+            token: (0, nanoid_1.nanoid)(20), // unik token
+            permission: "view",
+        };
+        await task.save();
+        res.json({
+            message: "Task shared successfully",
+            shareLink: `${process.env.APP_URL}/share/${task.share.token}`, // frontend-ə göndər
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Failed to share task" });
     }
 });
 // Get all tags with their tasks using aggregation

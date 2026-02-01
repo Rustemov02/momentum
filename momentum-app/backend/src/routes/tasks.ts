@@ -147,7 +147,7 @@ router.post("/:id/share", async (req: Request, res: Response) => {
 
     res.json({
       message: "Task shared successfully",
-      shareLink: `${process.env.APP_URL}/share/${task.share.token}`, // frontend-ə göndər
+      shareLink: `${process.env.FRONTEND_URL}/share/${task.share.token}`, // frontend-ə göndər
     });
   } catch (err) {
     console.log(err);

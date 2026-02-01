@@ -138,11 +138,12 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   const handleShare = async () => {
     const taskId = note._id;
 
-    const res = await apiRequest(`/api/tasks/${taskId}/share`, {
+    const res = await apiRequest(`/tasks/${taskId}/share`, {
       method: "POST",
     });
 
-    const data = await res.json();
+    const data = await res;
+    toast.success("Link Copied Succesfully");
     console.log("Share link:", data.shareLink);
   };
 
