@@ -1,4 +1,5 @@
 import "./passport";
+import "./services/notificationScheduler";
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -9,6 +10,8 @@ import Task from "./models/Task";
 import taskRoutes from "./routes/tasks";
 import authRoutes from "./routes/auth";
 import MongoStore from "connect-mongo";
+import subscriptionRoutes from "./routes/subscription";
+
 dotenv.config();
 
 const app = express();
@@ -91,6 +94,7 @@ app.get("/api/me", (req, res) => {
 // Routes
 app.use("/tasks", requireAuth, taskRoutes);
 app.use("/auth", authRoutes);
+app.use("/subscription", requireAuth, subscriptionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);

@@ -1,5 +1,7 @@
 /// <reference lib="webworker" />
 
+declare const self: ServiceWorkerGlobalScope;
+
 import { precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { NetworkOnly, NetworkFirst } from "workbox-strategies";
@@ -25,7 +27,7 @@ registerRoute(
   new NetworkOnly({
     plugins: [bgSyncPlugin],
   }),
-  "POST"
+  "POST",
 );
 
 // GET requestlər
@@ -39,5 +41,37 @@ registerRoute(
         maxAgeSeconds: 7 * 24 * 60 * 60,
       }),
     ],
-  })
+  }),
 );
+
+self.addEventListener("push", (event) => {
+  const { title, body } = JSON.parse(event.data?.text() || "{}");
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: "/icon-192.png",
+      badge: "/badge-72.png",
+      requireInteraction: true,
+    }),
+  );
+});
+
+// Notification click handler
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  event.waitUntil(
+    self.clients.matchAll({ includeControlled: true }).then((clients) => {
+      const windowClients = clients.filter(
+        (client): client is WindowClient => client.kind === "window",
+      );
+
+      if (windowClients.length > 0) {
+        windowClients[0].focus(); // ✅ WindowClient-da focus var
+      } else {
+        self.clients.openWindow("/");
+      }
+    }),
+  );
+});

@@ -12,6 +12,7 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    proxy: true,
 }, async (accessToken, refreshToken, profile, done) => {
     try {
         let user = await User_1.default.findOne({ googleId: profile.id });
@@ -31,7 +32,7 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
 }));
 // session-a yalnız ID yazılır
 passport_1.default.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
 });
 passport_1.default.deserializeUser(async (id, done) => {
     try {

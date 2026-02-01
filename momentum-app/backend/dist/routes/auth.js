@@ -12,15 +12,21 @@ router.get("/google", passport_1.default.authenticate("google", {
 }));
 // Google callback
 router.get("/google/callback", passport_1.default.authenticate("google", {
-    failureRedirect: "https://momentum02.vercel.app/login",
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
 }), (req, res) => {
     // burada user artıq authenticated-dir
-    res.redirect("https://momentum02.vercel.app");
+    res.redirect(`${process.env.FRONTEND_URL}`);
+    console.log(process.env.FRONTEND_URL);
 });
 // Logout
-router.get("/logout", (req, res) => {
-    req.logout(() => {
-        res.redirect("https://momentum02.vercel.app");
+router.get("/logout", (req, res, next) => {
+    req.logout((err) => {
+        if (err)
+            return next(err);
+        req.session.destroy((err) => {
+            res.clearCookie("connect.sid");
+            res.redirect(`${process.env.FRONTEND_URL}`);
+        });
     });
 });
 exports.default = router;

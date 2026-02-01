@@ -99,7 +99,7 @@ const Notes = () => {
     try {
       const response = await apiRequest("/tasks", {
         method: "POST",
-        body: { ...rest, expirtTime: expiryTime.value },
+        body: { ...rest, expiryTime: expiryTime.value },
       });
 
       setTaskData((prev) =>

@@ -1,12 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITask extends Document {
+  userId : mongoose.Schema.Types.ObjectId;
   title: string;
   description: string;
   tags: string[];
   completed: boolean;
   createdAt: Date;
   expiresAt?: Date;
+  notified: boolean;
 }
 
 const TaskSchema: Schema = new Schema({
@@ -21,6 +23,7 @@ const TaskSchema: Schema = new Schema({
   completed: { type: Boolean, required: false },
   createdAt: { type: Date, default: Date.now },
   expiresAt: { type: Date, default: null },
+  notified: { type: Boolean, default: false },
 });
 
 export default mongoose.model<ITask>("Task", TaskSchema);
