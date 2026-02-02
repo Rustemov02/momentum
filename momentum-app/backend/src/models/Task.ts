@@ -29,6 +29,19 @@ const TaskSchema: Schema = new Schema({
   createdAt: { type: Date, default: Date.now },
   expiresAt: { type: Date, default: null },
   notified: { type: Boolean, default: false },
+  share: {
+    type: {
+      isPublic: { type: Boolean, default: false },
+      token: { type: String },
+      permission: {
+        type: String,
+        enum: ["view", "edit"],
+        default: "view",
+      },
+    },
+    required: false,
+    default: undefined,
+  },
 });
 
 export default mongoose.model<ITask>("Task", TaskSchema);

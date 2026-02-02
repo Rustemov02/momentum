@@ -7,6 +7,7 @@ export default function SharedNotePage() {
   const { token } = useParams<{ token: string }>();
   const [note, setNote] = useState<any>(null);
 
+  console.log("TOKEN : " , token)
   useEffect(() => {
     const getNoteDetails = async () => {
       try {
@@ -16,6 +17,7 @@ export default function SharedNotePage() {
         console.log(res);
       } catch (err) {
         setNote(null);
+        console.log("request error : " , err)
       }
     };
 
@@ -26,7 +28,7 @@ export default function SharedNotePage() {
 
   return (
     <div>
-      <NoteDetailDialog isPublic={true} isOpen={note} note={note || null} />
+      <NoteDetailDialog isPublic={true} isOpen={true} note={note || null} />
     </div>
   );
 }
