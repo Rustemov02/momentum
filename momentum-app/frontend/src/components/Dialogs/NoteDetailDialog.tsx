@@ -29,7 +29,7 @@ import {
 import { formatDate } from "@/utils";
 import { apiRequest } from "@/utils/api";
 import { toast } from "react-toastify";
-
+import {useNavigate} from "react-router-dom"
 interface NoteDetailDialogProps {
   note: Note;
   isOpen: boolean;
@@ -47,6 +47,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
   onDelete,
   isPublic = false,
 }) => {
+  const navigate = useNavigate()
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [tagInput, setTagInput] = useState("");
@@ -201,7 +202,6 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                   {!isEditing ? (
                     !isPublic && (
                       <>
-                        
                         <Button
                           variant="ghost"
                           size="sm"
@@ -211,7 +211,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                           <Share className="w-4 h-4 sm:mr-2" />
                           <span className="hidden sm:inline">Share</span>
                         </Button>
-                        
+
                         <Button
                           variant="ghost"
                           size="sm"
@@ -252,12 +252,23 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
                       </Button>
                     </>
                   )}
-                  <button
-                    onClick={onClose}
-                    className="p-1.5 sm:p-2 cursor-pointer text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
-                  >
-                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
+                  {!isPublic ? (
+                    <button
+                      onClick={onClose}
+                      className="p-1.5 sm:p-2 cursor-pointer text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
+                    >
+                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </button>
+                  ) : (
+                    <Button
+                      className="text-white bg-gray-800 cursor-pointer h-10 px-2 sm:px-4"
+                      variant="ghost"
+                      size="sm"
+                      onClick={()=>navigate(`/notes`)}
+                    >
+                      Go to Momentum
+                    </Button>
+                  )}
                 </div>
               </div>
 

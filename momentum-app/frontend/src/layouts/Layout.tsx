@@ -33,20 +33,6 @@ const LayoutContent = () => {
     navigate(`/${tabId}`);
   };
 
-  // const renderContent = () => {
-  //   switch (activeTab) {
-  //     case "notes":
-  //       return (
-  //         <Notes
-  //           isCreateDialogOpen={isCreateDialogOpen}
-  //           setIsCreateDialogOpen={setIsCreateDialogOpen}
-  //         />
-  //       );
-  //     case "tags":
-  //       return <Tags />;
-  //   }
-  // };
-
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar
