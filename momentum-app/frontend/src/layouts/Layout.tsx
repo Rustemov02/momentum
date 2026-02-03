@@ -49,9 +49,9 @@ const LayoutContent = () => {
         />
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
-          <div className="max-w-6xl mx-auto">
+          {/* <div className="max-w-6xl mx-auto"> */}
             <Outlet />
-          </div>
+          {/* </div> */}
         </div>
       </main>
 
@@ -59,14 +59,12 @@ const LayoutContent = () => {
         isOpen={isChatbotOpen}
         onClose={() => setIsChatbotOpen(false)}
       />
-      <div className="flex flex-col gap-4 border-4">
         <ChatbotButton
           isOpen={isChatbotOpen}
           onClick={() => setIsChatbotOpen(!isChatbotOpen)}
         />
 
         <CreateNoteButton onClick={setIsCreateDialogOpen} />
-      </div>
     </div>
   );
 };
