@@ -51,8 +51,6 @@ const LayoutContent = () => {
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           <div className="max-w-6xl mx-auto">
             <Outlet />
-            {/* {children} */}
-            {/* {renderContent()} */}
           </div>
         </div>
       </main>

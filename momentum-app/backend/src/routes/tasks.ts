@@ -8,7 +8,16 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
   const user = (req as any).user;
 
-  const tasks = await Task.find({ userId: user._id }).sort({ createdAt: -1 });
+  const { search } = req.query;
+
+  const filter: any = { userId: user._id };
+
+  if (search && typeof search === "string" && search.trim() !== "") {
+    const regex = new RegExp(search.trim(), "i");
+    filter.$or = [{ title: regex }, { description: regex }, { tags: regex }];
+  }
+
+  const tasks = await Task.find(filter).sort({ createdAt: -1 });
   console.log("Tasks from MongoDB : ", tasks);
   res.json(tasks);
 });

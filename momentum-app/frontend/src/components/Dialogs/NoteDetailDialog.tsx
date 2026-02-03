@@ -187,7 +187,7 @@ export const NoteDetailDialog: React.FC<NoteDetailDialogProps> = ({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-start sm:items-center justify-between p-3 sm:p-6 border-b border-gray-800/50 gap-2">
+              <div className="flex items-center sm:items-center justify-between p-3 sm:p-6 border-b border-gray-800/50 gap-2">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <div
                     className={`w-2 h-2 rounded-full shrink-0 ${

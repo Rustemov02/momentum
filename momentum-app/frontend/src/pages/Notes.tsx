@@ -18,10 +18,17 @@ const Notes = () => {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const CACHED_TASKS_KEY = "cachedTask";
 
+  const { isCreateDialogOpen, setIsCreateDialogOpen, searchQuery } =
+    useLayout();
+
   // ! FETCH ALL TASKS FROM DB
-  const fetchTasks = async () => {
+  const fetchTasks = async (query: string) => {
     try {
-      const tasks = await apiRequest("/tasks");
+      const url = query.trim()
+        ? `/tasks?search=${encodeURIComponent(query.trim())}`
+        : "/tasks";
+
+      const tasks = await apiRequest(url);
       setTaskData(tasks);
       localStorage.setItem(CACHED_TASKS_KEY, JSON.stringify(tasks));
     } catch (err) {
@@ -66,8 +73,14 @@ const Notes = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
+    const timeout = setTimeout(() => {
+      fetchTasks(searchQuery);
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
+
+  useEffect(() => {
     // Online olduqda pending taskları sync et
     const handleOnline = () => {
       syncPendingTasks();
@@ -170,8 +183,6 @@ const Notes = () => {
       ),
     );
   };
-
-  const { isCreateDialogOpen, setIsCreateDialogOpen } = useLayout();
 
   if (loading) return <Loader />;
 

@@ -42,7 +42,7 @@ export default function SharedNotePage() {
             className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4"
           >
             <div className="w-11/12 sm:w-[30%] h-auto py-10 px-2 bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl sm:rounded-2xl shadow-2xl shadow-cyan-500/10 flex flex-col gap-16 items-center justify-center text-xl pointer-events-auto animate-in zoom-in-95 duration-200">
-             <p className="text-center"> Note not found or expired</p>
+              <p className="text-center"> Note not found or expired</p>
               <Button
                 className="text-white bg-gray-800 cursor-pointer h-10 px-2 sm:px-4"
                 variant="ghost"
