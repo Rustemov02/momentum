@@ -5,6 +5,7 @@ import { BASE_URL } from "@/constants/variables";
 import { toast } from "react-toastify";
 import { NoInternetModal } from "../Dialogs/NoInternetModal";
 import Loader from "../Loader";
+import { AppLoader } from "../AppLoader";
 
 const AuthGate = ({ children }: { children: any }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,9 +69,10 @@ const AuthGate = ({ children }: { children: any }) => {
 
   if (isLoading)
     return (
-      <div className="h-dvh flex items-center justify-center">
-        <Loader />
-      </div>
+      // <div className="h-dvh flex items-center justify-center">
+      //   <Loader />
+      // </div>
+      <AppLoader isOpen={isLoading} />
     );
 
   if (!cachedUser && !navigator.onLine) {

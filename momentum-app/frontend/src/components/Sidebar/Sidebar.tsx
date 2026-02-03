@@ -3,6 +3,7 @@ import { FileText, Menu, X } from "lucide-react";
 import type { FC } from "react";
 import { Button } from "../Button/Button";
 import { BASE_URL } from "@/constants/variables";
+import { UserProfile } from "../Profile/UserProfile";
 
 interface SidebarProps {
   activeTab: string;
@@ -20,6 +21,8 @@ const Sidebar: FC<SidebarProps> = ({
     if (!navigator.onLine) return;
     window.location.href = `${BASE_URL}/auth/logout`;
   };
+
+  const userData = localStorage.getItem("cachedUser");
 
   return (
     <>
@@ -94,14 +97,19 @@ const Sidebar: FC<SidebarProps> = ({
           {/* Footer */}
           <div className="mt-auto pt-6 border-t border-gray-800/50">
             <div className="text-gray-500 text-sm">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
                 className="text-gray-400 hover:text-white cursor-pointer hover:bg-gray-800 h-8 px-2 sm:px-3"
               >
                 Log out
-              </Button>
+              </Button> */}
+
+              <UserProfile
+                user={JSON.parse(userData || "{}")}
+                onLogout={handleLogout}
+              />
             </div>
           </div>
         </div>

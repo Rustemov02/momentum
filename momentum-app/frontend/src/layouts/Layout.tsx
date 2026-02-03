@@ -7,6 +7,7 @@ import CreateNoteButton from "@/components/CreateNoteButton/CreateNoteButton";
 import { AIChatbot } from "@/components/Dialogs/AIChatbot";
 import { ChatbotButton } from "@/components/Button/ChatBotButton";
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
+import { AppLoader } from "@/components/AppLoader";
 
 const LayoutContent = () => {
   // const [activeTab, setActiveTab] = useState("notes");
@@ -50,7 +51,7 @@ const LayoutContent = () => {
 
         <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
           {/* <div className="max-w-6xl mx-auto"> */}
-            <Outlet />
+          <Outlet />
           {/* </div> */}
         </div>
       </main>
@@ -59,12 +60,12 @@ const LayoutContent = () => {
         isOpen={isChatbotOpen}
         onClose={() => setIsChatbotOpen(false)}
       />
-        <ChatbotButton
-          isOpen={isChatbotOpen}
-          onClick={() => setIsChatbotOpen(!isChatbotOpen)}
-        />
+      <ChatbotButton
+        isOpen={isChatbotOpen}
+        onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+      />
 
-        <CreateNoteButton onClick={setIsCreateDialogOpen} />
+      <CreateNoteButton onClick={setIsCreateDialogOpen} />
     </div>
   );
 };

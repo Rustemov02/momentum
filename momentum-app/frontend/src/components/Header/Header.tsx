@@ -1,7 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "../Input/Input";
 import type { Dispatch, SetStateAction } from "react";
-import { UserProfile } from "../Profile/UserProfile";
 
 const Header = ({
   searchQuery,
@@ -12,7 +11,6 @@ const Header = ({
   setSearchQuery: Dispatch<SetStateAction<string>>;
   tabTitle: string;
 }) => {
-  const userData = localStorage.getItem("cachedUser");
   return (
     <header className="shrink-0 px-6 lg:px-8 py-6 border-b border-gray-800/50 bg-gray-900/30 backdrop-blur-sm">
       {/* <div className="max-w-6xl mx-auto"> */}
@@ -38,7 +36,6 @@ const Header = ({
       </div>
       {/* </div> */}
 
-      <UserProfile user={JSON.parse(userData || "{}")} onLogout={() => {}} />
     </header>
   );
 };

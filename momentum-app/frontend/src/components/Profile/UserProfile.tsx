@@ -32,10 +32,10 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/50">
+        <button className="flex items-center cursor-pointer gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/50">
           <Avatar className="w-8 h-8 border border-gray-700">
             <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-sm">
+            <AvatarFallback className="bg-linear-to-br from-cyan-500 to-blue-600 text-white text-sm">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
@@ -45,7 +45,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user, onLogout }) => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="end"
+        align="start"
         className="w-56 bg-gray-900 border-gray-800 text-white"
       >
         <DropdownMenuLabel className="text-gray-400">
