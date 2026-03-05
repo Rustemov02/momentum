@@ -1,11 +1,9 @@
 import { apiRequest } from "@/utils/api";
 import { useEffect, useState } from "react";
-import { GoogleLoginModal } from "../Dialogs/GoogleLoginModal";
-import { BASE_URL } from "@/constants/variables";
 import { toast } from "react-toastify";
 import { NoInternetModal } from "../Dialogs/NoInternetModal";
-import Loader from "../Loader";
 import { AppLoader } from "../AppLoader";
+import LandingPage from "@/pages/LandingPage";
 
 const AuthGate = ({ children }: { children: any }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,9 +67,6 @@ const AuthGate = ({ children }: { children: any }) => {
 
   if (isLoading)
     return (
-      // <div className="h-dvh flex items-center justify-center">
-      //   <Loader />
-      // </div>
       <AppLoader isOpen={isLoading} />
     );
 
@@ -79,21 +74,13 @@ const AuthGate = ({ children }: { children: any }) => {
     return (
       <NoInternetModal
         isOpen
-        // onRetry={() => {
-        //   window.location.href = `${BASE_URL}/auth/google`;
-        // }}
       />
     );
   }
 
   if (!cachedUser && navigator.onLine) {
     return (
-      <GoogleLoginModal
-        isOpen={true}
-        onLogin={() => {
-          window.location.href = `${BASE_URL}/auth/google`;
-        }}
-      />
+      <LandingPage />
     );
   }
 

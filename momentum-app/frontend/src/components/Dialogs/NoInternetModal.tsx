@@ -1,13 +1,15 @@
 import React from "react";
-import { WifiOff, RefreshCw } from "lucide-react";
+import { WifiOff } from "lucide-react";
 
 interface NoInternetModalProps {
   isOpen: boolean;
+  onClose?: () => void;
   onRetry?: () => void;
 }
 
 export const NoInternetModal: React.FC<NoInternetModalProps> = ({
   isOpen,
+  onClose,
   // onRetry,
 }) => {
   if (!isOpen) return null;
@@ -15,7 +17,10 @@ export const NoInternetModal: React.FC<NoInternetModalProps> = ({
   return (
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
       {/* Backdrop - blocks interaction with app */}
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" />
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
+        onClick={() => onClose?.()}
+      />
 
       {/* Modal content */}
       <div className="relative w-full max-w-md bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 rounded-2xl border border-gray-800/50 shadow-2xl p-8 sm:p-12">
