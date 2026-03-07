@@ -37,10 +37,24 @@
   background: var(--scrollbar-thumb-hover);
 }
 
-::-webkit-scrollbar {
-  opacity: 0.6;
-  transition: opacity 0.2s;
+/* Custom Styles for Landing Page */
+.bg-radial-gradient {
+  background: radial-gradient(circle at center, #002b2e 0%, #0a0a0a 100%);
 }
-:hover::-webkit-scrollbar {
-  opacity: 1;
+
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(19, 200, 236, 0.4);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
 }
