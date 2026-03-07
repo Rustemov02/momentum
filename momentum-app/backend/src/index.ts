@@ -92,6 +92,10 @@ app.get("/api/me", (req, res) => {
 });
 
 // Routes
+app.get("/api/health", (req, res) => {
+  res.status(200).send("ok");
+});
+
 app.use("/tasks", requireAuth, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/subscription", requireAuth, subscriptionRoutes);
