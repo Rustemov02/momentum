@@ -1,34 +1,54 @@
-# 📝 Momentum
+📝 Momentum – Intelligent Offline-First Note-Taking
+Momentum is a modern, full-stack productivity application built with a focus on security, AI-enhanced features, and a seamless offline-first experience. It allows users to manage their personal knowledge base with intelligent tools in a high-performance environment.
 
-Momentum is a modern, offline-capable note-taking app where each user can securely manage their own notes.
+🚀 Features
+Google OAuth 2.0 Integration: Secure user authentication and session management using Passport.js.
 
----
+AI-Powered Assistance: Built-in support for automated note summarization and content analysis.
 
-## 🚀 Features
+Smart Querying (RAG): An advanced retrieval system that allows you to "talk" to your notes and get contextual answers based on your saved data.
 
-- **Google login (OAuth 2.0)**  
-- **User-specific notes only**  
-- **Create, update, delete notes**  
-- **Tags & note expiration** (24h, 3d, 7d, never)  
-- **Offline support with cached data**  
-- **Responsive design** for desktop & mobile  
+Offline-First & PWA: Fully functional offline capabilities with cached data support, ensuring your notes are always accessible.
 
----
+Dynamic Tagging System: A smart sidebar featuring a "Tag Cloud" where tags are visually prioritized based on usage frequency.
 
-## 🔐 Authentication
+Note Expiration: Flexible management of note lifespans with presets (24h, 3d, 7d, or Permanent).
 
-- Users must log in via Google  
-- Sessions validated with `/api/me`  
-- **Online:** shows Google login modal if not authenticated  
-- **Offline:** requires internet to log in  
+Responsive UI: A clean, mobile-first design built for both desktop and smartphone users.
 
----
+🌐 Tech Stack
+Frontend:
 
-## 🌐 Tech Stack
+React & TypeScript: For building a robust and type-safe user interface.
 
-**Frontend:** React, TypeScript, Vite, Tailwind, PWA  
-**Backend:** Node.js, Express, MongoDB, Passport.js (Google OAuth), Express Session  
+Vite: For ultra-fast development and optimized production builds.
 
+Tailwind CSS: For modern, utility-first styling.
+
+PWA: Service workers and manifest for offline support and installability.
+
+Backend:
+
+Node.js & Express: Handling the core server logic and API routes.
+
+MongoDB: NoSQL database for flexible and scalable data storage.
+
+Passport.js: Managing Google OAuth strategy and user sessions.
+
+OpenAI / Vercel AI SDK: Powering the intelligent RAG (Retrieval-Augmented Generation) features.
+
+Deployment:
+
+Frontend: Hosted on Vercel.
+
+Backend: Hosted on Render.
+
+🔐 Authentication & Health Checks
+Data Isolation: Users can only access and manage their own specific notes.
+
+Session Validation: Active sessions are validated via the /api/me endpoint.
+
+Anti-Sleep (Health-Check): Includes a dedicated /api/ping public endpoint to keep the Render instance awake via external cron-jobs without requiring authentication.
 ---
 
 ## 🎯 Purpose
